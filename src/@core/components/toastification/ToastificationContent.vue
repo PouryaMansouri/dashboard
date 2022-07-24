@@ -1,5 +1,5 @@
 <template>
-  <div class="toastification shabnam-fd">
+  <div class="toastification">
     <div class="d-flex align-items-start">
       <b-avatar
         :variant="variant"

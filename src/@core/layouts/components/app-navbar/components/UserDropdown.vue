@@ -2,14 +2,14 @@
   <b-nav-item-dropdown
     right
     toggle-class="d-flex align-items-center dropdown-user-link"
-    class="dropdown-user shabnam-fd"
+    class="dropdown-user"
   >
     <template #button-content>
       <div class="d-sm-flex d-none user-nav">
         <p class="user-name font-weight-bolder mb-0">
-          {{ userData.name }}
+          {{ userData.fullName || userData.username }}
         </p>
-        <span class="user-status">{{ userData.type }}</span>
+        <span class="user-status">{{ userData.role }}</span>
       </div>
       <b-avatar
         size="40"
@@ -20,13 +20,13 @@
         badge-variant="success"
       >
         <feather-icon
-          v-if="!userData.avatar"
+          v-if="!userData.fullName"
           icon="UserIcon"
           size="22"
         />
       </b-avatar>
     </template>
-    <!--
+
     <b-dropdown-item
       :to="{ name: 'pages-profile'}"
       link-class="d-flex align-items-center"
@@ -72,7 +72,7 @@
       <span>Chat</span>
     </b-dropdown-item>
 
-    <b-dropdown-divider /> -->
+    <b-dropdown-divider />
 
     <b-dropdown-item
       :to="{ name: 'pages-account-setting' }"
@@ -80,25 +80,12 @@
     >
       <feather-icon
         size="16"
-        icon="UserIcon"
+        icon="SettingsIcon"
         class="mr-50"
       />
-      <span>پروفایل</span>
+      <span>Settings</span>
     </b-dropdown-item>
-
     <b-dropdown-item
-      :to="{ name: 'pages-account-finance' }"
-      link-class="d-flex align-items-center"
-    >
-      <feather-icon
-        size="16"
-        icon="DollarSignIcon"
-        class="mr-50"
-      />
-      <span>مالی</span>
-    </b-dropdown-item>
-
-    <!-- <b-dropdown-item
       :to="{ name: 'pages-pricing' }"
       link-class="d-flex align-items-center"
     >
@@ -119,8 +106,7 @@
         class="mr-50"
       />
       <span>FAQ</span>
-    </b-dropdown-item> -->
-
+    </b-dropdown-item>
     <b-dropdown-item
       link-class="d-flex align-items-center"
       @click="logout"
@@ -130,16 +116,13 @@
         icon="LogOutIcon"
         class="mr-50"
       />
-      <span>خروج</span>
+      <span>Logout</span>
     </b-dropdown-item></b-nav-item-dropdown>
 </template>
 
 <script>
 import {
-  BNavItemDropdown,
-  BDropdownItem,
-  BDropdownDivider,
-  BAvatar,
+  BNavItemDropdown, BDropdownItem, BDropdownDivider, BAvatar,
 } from 'bootstrap-vue'
 import { initialAbility } from '@/libs/acl/config'
 import useJwt from '@/auth/jwt/useJwt'
@@ -149,6 +132,7 @@ export default {
   components: {
     BNavItemDropdown,
     BDropdownItem,
+    BDropdownDivider,
     BAvatar,
   },
   data() {
@@ -166,14 +150,12 @@ export default {
 
       // Remove userData from localStorage
       localStorage.removeItem('userData')
-      localStorage.removeItem('courtId')
-      localStorage.removeItem('courtName')
 
       // Reset ability
       this.$ability.update(initialAbility)
 
       // Redirect to login page
-      this.$router.push({ name: 'otp-send' })
+      this.$router.push({ name: 'auth-login' })
     },
   },
 }

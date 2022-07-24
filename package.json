@@ -1,5 +1,5 @@
 {
-  "name": "market",
+  "name": "sarar",
   "version": "6.4.0",
   "private": true,
   "scripts": {
@@ -23,7 +23,6 @@
     "animate.css": "4.1.1",
     "apexcharts": "3.23.0",
     "axios": "0.21.1",
-    "axios-mock-adapter": "1.19.0",
     "bootstrap": "4.6.0",
     "bootstrap-vue": "2.21.1",
     "chart.js": "2.9.4",

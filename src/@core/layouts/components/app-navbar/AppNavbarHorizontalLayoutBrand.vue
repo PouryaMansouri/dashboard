@@ -12,7 +12,7 @@
               alt="logo"
             />
           </span>
-          <h2 class="brand-text mb-0 shabnam-fd">
+          <h2 class="brand-text mb-0">
             {{ appName }}
           </h2>
         </b-link>

@@ -1,25 +1,25 @@
 <template>
-  <div class="misc-wrapper shabnam-fd">
+  <div class="misc-wrapper">
     <b-link class="brand-logo">
-      <sarar-logo />
+      <vuexy-logo />
       <h2 class="brand-text text-primary ml-1">
-        sarar - dashboard
+        Vuexy
       </h2>
     </b-link>
 
     <div class="misc-inner p-2 p-sm-3">
       <div class="w-100 text-center">
         <h2 class="mb-1">
-          دسترسی شناسایی نشد! 🔐
+          You are not authorized! 🔐
         </h2>
         <p class="mb-2">
-          شما دسترسی لازم به این صفحه را ندارید!! به خانه برگردید
+          You don’t have permission to access this page. Go Home!!
         </p>
         <b-button
           variant="primary"
           class="mb-1 btn-sm-block"
           :to="loginRoute()"
-        >برگشت به خانه</b-button>
+        >Back to Home</b-button>
         <b-img
           fluid
           :src="imgUrl"
@@ -33,13 +33,13 @@
 <script>
 /* eslint-disable global-require */
 import { BLink, BImg, BButton } from 'bootstrap-vue'
-import SararLogo from '@core/layouts/components/Logo.vue'
+import VuexyLogo from '@core/layouts/components/Logo.vue'
 import store from '@/store/index'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 
 export default {
   components: {
-    BLink, BImg, BButton, SararLogo,
+    BLink, BImg, BButton, VuexyLogo,
   },
   data() {
     return {

@@ -8,9 +8,9 @@ export default function useAppCustomizer() {
   // Skin
   const skinOptions = [
     { text: 'Light', value: 'light' },
-    { text: 'Bordered', value: 'bordered' },
+    // { text: 'Bordered', value: 'bordered' },
     { text: 'Dark', value: 'dark' },
-    { text: 'Semi Dark', value: 'semi-dark' },
+    // { text: 'Semi Dark', value: 'semi-dark' },
   ]
 
   // Content Width Options
@@ -42,8 +42,6 @@ export default function useAppCustomizer() {
   const navbarTypes = [
     { text: 'Floating', value: 'floating' },
     { text: 'Sticky', value: 'sticky' },
-    { text: 'Static', value: 'static' },
-    { text: 'Hidden', value: 'hidden' },
   ]
 
   // Footer Types

@@ -18,16 +18,16 @@
 
     <!-- Left Col -->
     <div class="bookmark-wrapper align-items-center flex-grow-1 d-none d-lg-flex">
-      <bookmarks />
+      <!-- <bookmarks /> -->
     </div>
 
     <!-- Right Col -->
     <b-navbar-nav class="nav align-items-center ml-auto">
       <locale />
       <dark-Toggler class="d-none d-lg-block" />
-      <search-bar />
+      <!-- <search-bar />
       <cart-dropdown />
-      <notification-dropdown />
+      <notification-dropdown /> -->
       <user-dropdown />
     </b-navbar-nav>
   </div>
