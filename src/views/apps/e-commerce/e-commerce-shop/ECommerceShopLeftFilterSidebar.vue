@@ -1,23 +1,17 @@
 <template>
   <div class="sidebar-detached sidebar-left">
     <div class="sidebar">
-      <div
-        class="sidebar-shop"
-        :class="{'show': mqShallShowLeftSidebar}"
-      >
+      <div class="sidebar-shop" :class="{ show: mqShallShowLeftSidebar }">
         <b-row>
           <b-col cols="12">
-            <h6 class="filter-heading d-none d-lg-block">
-              Filters
-            </h6>
+            <h6 class="filter-heading d-none d-lg-block">Filters</h6>
           </b-col>
         </b-row>
 
         <!-- Filters' Card -->
         <b-card>
-
           <!-- Multi Range -->
-          <div class="multi-range-price">
+          <!-- <div class="multi-range-price">
             <h6 class="filter-title mt-0">
               Multi Range
             </h6>
@@ -27,10 +21,10 @@
               stacked
               :options="filterOptions.priceRangeDefined"
             />
-          </div>
+          </div> -->
 
           <!-- Price Slider -->
-          <div class="price-slider">
+          <!-- <div class="price-slider">
             <h6 class="filter-title">
               Price Range
             </h6>
@@ -38,13 +32,11 @@
               v-model="filters.priceRange"
               :direction="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
             />
-          </div>
+          </div> -->
 
           <!-- Categories -->
           <div class="product-categories">
-            <h6 class="filter-title">
-              Categories
-            </h6>
+            <h6 class="filter-title">Categories</h6>
             <b-form-radio-group
               v-model="filters.categories"
               class="categories-radio-group"
@@ -55,9 +47,7 @@
 
           <!-- Brands -->
           <div class="brands">
-            <h6 class="filter-title">
-              Brands
-            </h6>
+            <h6 class="filter-title">Brands</h6>
             <b-form-radio-group
               v-model="filters.brands"
               class="brands-radio-group"
@@ -67,7 +57,7 @@
           </div>
 
           <!-- Ratings -->
-          <div class="ratings">
+          <!-- <div class="ratings">
             <h6 class="filter-title">
               Ratings
             </h6>
@@ -92,24 +82,24 @@
                 <span>{{ rating.count }}</span>
               </div>
             </div>
-          </div>
+          </div> -->
         </b-card>
       </div>
     </div>
 
     <div
       class="body-content-overlay"
-      :class="{'show': mqShallShowLeftSidebar}"
+      :class="{ show: mqShallShowLeftSidebar }"
       @click="$emit('update:mq-shall-show-left-sidebar', false)"
     />
   </div>
 </template>
 
 <script>
-import {
-  BRow, BCol, BCard, BFormRadioGroup, BLink,
-} from 'bootstrap-vue'
-import VueSlider from 'vue-slider-component'
+import { BRow, BCol, BCard, BFormRadioGroup, BLink } from "bootstrap-vue";
+import VueSlider from "vue-slider-component";
+import { ref, onMounted } from "@vue/composition-api";
+import store from "@/store";
 
 export default {
   components: {
@@ -122,12 +112,19 @@ export default {
     // 3rd Party
     VueSlider,
   },
+  data() {
+    return {
+      filterOptions: { categories: [], brands: [] },
+    };
+  },
+  async created() {
+    this.filterOptions = await store.dispatch(
+      "app-ecommerce/fetchFilterOptions",
+      {}
+    );
+  },
   props: {
     filters: {
-      type: Object,
-      required: true,
-    },
-    filterOptions: {
       type: Object,
       required: true,
     },
@@ -136,18 +133,18 @@ export default {
       required: true,
     },
   },
-}
+};
 </script>
 
 <style lang="scss">
-@import '~@core/scss/vue/libs/vue-slider.scss';
+@import "~@core/scss/vue/libs/vue-slider.scss";
 </style>
 
 <style lang="scss" scoped>
 .categories-radio-group,
 .brands-radio-group,
 .price-range-defined-radio-group {
-    ::v-deep > .custom-control {
+  ::v-deep > .custom-control {
     margin-bottom: 0.75rem;
   }
 }

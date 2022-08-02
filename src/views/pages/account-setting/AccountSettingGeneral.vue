@@ -1,39 +1,33 @@
 <template>
   <b-card>
-
     <!-- media -->
     <b-media no-body>
       <b-media-aside>
-        <b-link>
-          <b-img
-            ref="previewEl"
-            rounded
-            :src="optionsLocal.avatar"
-            height="80"
-          />
-        </b-link>
+        <b-img ref="previewEl" rounded :src="photo" height="80" />
+        <b-img
+          ref="previewEl"
+          v-if="!photo"
+          rounded
+          :src="generalData.avatar"
+          height="80"
+        />
+
         <!--/ avatar -->
       </b-media-aside>
-
       <b-media-body class="mt-75 ml-75">
         <!-- upload button -->
+        <div v-if="spinner" class="text-center">
+          <b-spinner variant="primary" label="Text Centered" />
+        </div>
         <b-button
+          id="pick-avatar"
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
           variant="primary"
           size="sm"
           class="mb-75 mr-75"
-          @click="$refs.refInputEl.$el.click()"
         >
           Upload
         </b-button>
-        <b-form-file
-          ref="refInputEl"
-          v-model="profileFile"
-          accept=".jpg, .png, .gif"
-          :hidden="true"
-          plain
-          @input="inputImageRenderer"
-        />
         <!--/ upload button -->
 
         <!-- reset -->
@@ -42,11 +36,11 @@
           variant="outline-secondary"
           size="sm"
           class="mb-75 mr-75"
+          @click="deleteUserPhoto"
         >
-          Reset
+          Remove
         </b-button>
         <!--/ reset -->
-        <b-card-text>Allowed JPG, GIF or PNG. Max size of 800kB</b-card-text>
       </b-media-body>
     </b-media>
     <!--/ media -->
@@ -55,76 +49,41 @@
     <b-form class="mt-2">
       <b-row>
         <b-col sm="6">
-          <b-form-group
-            label="Username"
-            label-for="account-username"
-          >
+          <b-form-group label="First Name" label-for="first_name">
             <b-form-input
-              v-model="optionsLocal.username"
-              placeholder="Username"
-              name="username"
+              v-model="generalData.user.first_name"
+              name="first_name"
+              placeholder="First Name"
             />
           </b-form-group>
         </b-col>
         <b-col sm="6">
-          <b-form-group
-            label="Name"
-            label-for="account-name"
-          >
+          <b-form-group label="Last Name" label-for="last_name">
             <b-form-input
-              v-model="optionsLocal.fullName"
-              name="name"
-              placeholder="Name"
+              v-model="generalData.user.last_name"
+              name="last_name"
+              placeholder="Last Name"
             />
           </b-form-group>
         </b-col>
         <b-col sm="6">
-          <b-form-group
-            label="E-mail"
-            label-for="account-e-mail"
-          >
+          <b-form-group label="E-mail" label-for="account-e-mail">
             <b-form-input
-              v-model="optionsLocal.email"
+              v-model="generalData.user.email"
               name="email"
               placeholder="Email"
             />
-
           </b-form-group>
         </b-col>
         <b-col sm="6">
-          <b-form-group
-            label="Company"
-            label-for="account-company"
-          >
+          <b-form-group label="Phone Number" label-for="phone_number">
             <b-form-input
-              v-model="optionsLocal.company"
-              name="company"
-              placeholder="Company name"
+              v-model="generalData.user.phone_number"
+              name="phone_number"
+              placeholder="Phone Number"
             />
           </b-form-group>
         </b-col>
-
-        <!-- alert -->
-        <b-col
-          cols="12"
-          class="mt-75"
-        >
-          <b-alert
-            show
-            variant="warning"
-            class="mb-50"
-          >
-            <h4 class="alert-heading">
-              Your email is not confirmed. Please check your inbox.
-            </h4>
-            <div class="alert-body">
-              <b-link class="alert-link">
-                Resend confirmation
-              </b-link>
-            </div>
-          </b-alert>
-        </b-col>
-        <!--/ alert -->
 
         <b-col cols="12">
           <b-button
@@ -134,28 +93,44 @@
           >
             Save changes
           </b-button>
-          <b-button
-            v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-            variant="outline-secondary"
-            type="reset"
-            class="mt-2"
-            @click.prevent="resetForm"
-          >
-            Reset
-          </b-button>
         </b-col>
       </b-row>
     </b-form>
+    <avatar-cropper
+      @uploading="handleUploading"
+      @uploaded="handleUploaded"
+      @completed="handleCompleted"
+      @error="handlerError"
+      :labels="{ submit: 'upload', cancel: 'cancel' }"
+      :output-options="{ width: 640, height: 640 }"
+      trigger="#pick-avatar"
+      upload-url="/crop"
+    />
   </b-card>
 </template>
 
 <script>
 import {
-  BFormFile, BButton, BForm, BFormGroup, BFormInput, BRow, BCol, BAlert, BCard, BCardText, BMedia, BMediaAside, BMediaBody, BLink, BImg,
-} from 'bootstrap-vue'
-import Ripple from 'vue-ripple-directive'
-import { useInputImageRenderer } from '@core/comp-functions/forms/form-utils'
-import { ref } from '@vue/composition-api'
+  BFormFile,
+  BButton,
+  BForm,
+  BFormGroup,
+  BFormInput,
+  BRow,
+  BCol,
+  BAlert,
+  BCard,
+  BCardText,
+  BMedia,
+  BMediaAside,
+  BMediaBody,
+  BLink,
+  BImg,
+} from "bootstrap-vue";
+import Ripple from "vue-ripple-directive";
+import { useInputImageRenderer } from "@core/comp-functions/forms/form-utils";
+import { ref } from "@vue/composition-api";
+import AvatarCropper from "vue-avatar-cropper";
 
 export default {
   components: {
@@ -174,6 +149,7 @@ export default {
     BMediaAside,
     BMediaBody,
     BLink,
+    AvatarCropper,
   },
   directives: {
     Ripple,
@@ -186,26 +162,82 @@ export default {
   },
   data() {
     return {
-      optionsLocal: JSON.parse(JSON.stringify(this.generalData)),
       profileFile: null,
-    }
+      spinner: false,
+    };
   },
   methods: {
-    resetForm() {
-      this.optionsLocal = JSON.parse(JSON.stringify(this.generalData))
+    deleteUserPhoto() {
+      this.$swal({
+        title: "Accept Or Deny",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Remove",
+        cancelButtonText: "Cancel",
+        customClass: {
+          confirmButton: "btn btn-primary",
+          cancelButton: "btn btn-outline-danger ml-1",
+        },
+        buttonsStyling: false,
+      }).then((result) => {
+        if (result.value) {
+          this.$http
+            .delete(`photos/user`)
+            .then((response) => {
+              if (response.data.status == false) {
+                this.$toast({
+                  component: ToastificationContent,
+                  position: "top-right",
+                  props: {
+                    title: "Error",
+                    variant: "danger",
+                    text: "Error",
+                  },
+                });
+              } else {
+                this.$swal({
+                  icon: "success",
+                  text: "Deleted",
+                  confirmButtonText: "OK",
+                  customClass: {
+                    confirmButton: "btn btn-primary",
+                  },
+                });
+                window.location.reload(true);
+              }
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+        }
+      });
+    },
+    handleUploading(form, xhr) {
+      this.spinner = true;
+      let formData = new FormData();
+      formData.append("file", form.get("file"));
+      this.$http
+        .post("photos/user", formData)
+        .then(() => {
+          this.spinner = false;
+          window.location.reload(true);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
   },
   setup() {
-    const refInputEl = ref(null)
-    const previewEl = ref(null)
+    const refInputEl = ref(null);
+    const previewEl = ref(null);
 
-    const { inputImageRenderer } = useInputImageRenderer(refInputEl, previewEl)
+    const { inputImageRenderer } = useInputImageRenderer(refInputEl, previewEl);
 
     return {
       refInputEl,
       previewEl,
       inputImageRenderer,
-    }
+    };
   },
-}
+};
 </script>

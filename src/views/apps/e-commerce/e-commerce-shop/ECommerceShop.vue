@@ -117,27 +117,27 @@
                   <feather-icon
                     icon="StarIcon"
                     size="16"
-                    :class="[{'fill-current': star <= product.rating}, star <= product.rating ? 'text-warning' : 'text-muted']"
+                    :class="[{'fill-current': star <= product.star}, star <= product.star ? 'text-warning' : 'text-muted']"
                   />
                 </li>
               </ul>
             </div>
-            <div>
+            <!-- <div>
               <h6 class="item-price">
                 ${{ product.price }}
               </h6>
-            </div>
+            </div> -->
           </div>
           <h6 class="item-name">
             <b-link
               class="text-body"
-              :to="{ name: 'apps-e-commerce-product-details', params: { slug: product.slug } }"
+              :to="{ name: 'apps-e-commerce-product-details', params: { id: product.id } }"
             >
               {{ product.name }}
             </b-link>
             <b-card-text class="item-company">
               By <b-link class="ml-25">
-                {{ product.brand }}
+                {{ product.brand.name }}
               </b-link>
             </b-card-text>
           </h6>
@@ -147,7 +147,7 @@
         </b-card-body>
 
         <!-- Product Actions -->
-        <div class="item-options text-center">
+        <!-- <div class="item-options text-center">
           <div class="item-wrapper">
             <div class="item-cost">
               <h4 class="item-price">
@@ -180,7 +180,7 @@
             />
             <span>{{ product.isInCart ? 'View In Cart' : 'Add to Cart' }}</span>
           </b-button>
-        </div>
+        </div> -->
       </b-card>
     </section>
 
@@ -219,7 +219,6 @@
     <portal to="content-renderer-sidebar-detached-left">
       <shop-left-filter-sidebar
         :filters="filters"
-        :filter-options="filterOptions"
         :mq-shall-show-left-sidebar.sync="mqShallShowLeftSidebar"
       />
     </portal>
@@ -236,6 +235,7 @@ import { useResponsiveAppLeftSidebarVisibility } from '@core/comp-functions/ui/a
 import ShopLeftFilterSidebar from './ECommerceShopLeftFilterSidebar.vue'
 import { useShopFiltersSortingAndPagination, useShopUi, useShopRemoteData } from './useECommerceShop'
 import { useEcommerceUi } from '../useEcommerce'
+import { data } from 'vue-echarts'
 
 export default {
   directives: {
@@ -265,7 +265,7 @@ export default {
   },
   setup() {
     const {
-      filters, filterOptions, sortBy, sortByOptions,
+      filters, sortBy, sortByOptions,
     } = useShopFiltersSortingAndPagination()
 
     const { handleCartActionClick, toggleProductInWishlist } = useEcommerceUi()
@@ -285,10 +285,12 @@ export default {
         sortBy: sortBy.value.value,
         page: filters.value.page,
         perPage: filters.value.perPage,
+        categories: filters.value.categories,
+        brands: filters.value.brands,
       })
-        .then(response => {
-          products.value = response.data.products
-          totalProducts.value = response.data.total
+        .then(data => {
+          products.value = data
+          totalProducts.value = data.length
         })
     }
 
@@ -303,7 +305,6 @@ export default {
     return {
       // useShopFiltersSortingAndPagination
       filters,
-      filterOptions,
       sortBy,
       sortByOptions,
 
@@ -324,11 +325,9 @@ export default {
 }
 </script>
 
-<style lang="scss">
-@import "~@core/scss/base/pages/app-ecommerce.scss";
-</style>
-
 <style lang="scss" scoped>
+@import "~@core/scss/base/pages/app-ecommerce.scss";
+
 .item-view-radio-group ::v-deep {
   .btn {
     display: flex;

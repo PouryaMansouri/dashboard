@@ -1,4 +1,5 @@
 import jwtDefaultConfig from './jwtDefaultConfig'
+import router from '@/router';
 
 export default class JwtService {
   // Will be used by this service for making API calls
@@ -49,11 +50,16 @@ export default class JwtService {
               this.isAlreadyFetchingAccessToken = false
 
               // Update accessToken in localStorage
-              this.setToken(r.data.accessToken)
-              this.setRefreshToken(r.data.refreshToken)
+              this.setToken(r.data.access)
+              this.setRefreshToken(r.data.refresh)
 
-              this.onAccessTokenFetched(r.data.accessToken)
+              this.onAccessTokenFetched(r.data.access)
             })
+          } else {
+            localStorage.removeItem('access')
+            localStorage.removeItem('refresh')
+            localStorage.removeItem('userData')
+            router.push({ name: 'auth-login' })
           }
           const retryOriginalRequest = new Promise(resolve => {
             this.addSubscriber(accessToken => {
@@ -105,7 +111,7 @@ export default class JwtService {
 
   refreshToken() {
     return this.axiosIns.post(this.jwtConfig.refreshEndpoint, {
-      refreshToken: this.getRefreshToken(),
+      refresh: this.getRefreshToken(),
     })
   }
 }

@@ -1,6 +1,5 @@
 import { ref, watch, computed } from '@vue/composition-api'
 import store from '@/store'
-import { title } from '@core/utils/filter'
 
 // Notification
 import { useToast } from 'vue-toastification/composition'
@@ -25,13 +24,12 @@ export default function useUsersList() {
   const perPage = ref(10)
   const totalUsers = ref(0)
   const currentPage = ref(1)
-  const perPageOptions = [10, 25, 50, 100]
+  const perPageOptions = [5, 10, 25, 50, 100]
   const searchQuery = ref('')
   const sortBy = ref('id')
-  const isSortDirDesc = ref(true)
-  const roleFilter = ref(null)
-  const planFilter = ref(null)
-  const statusFilter = ref(null)
+  const isSortDirDesc = ref(false)
+  const isActiveFilter = ref(null)
+  const isStaffFilter = ref(null)
 
   const dataMeta = computed(() => {
     const localItemsCount = refUserListTable.value ? refUserListTable.value.localItems.length : 0
@@ -46,18 +44,25 @@ export default function useUsersList() {
     refUserListTable.value.refresh()
   }
 
-  watch([currentPage, perPage, searchQuery, roleFilter, planFilter, statusFilter], () => {
+  watch([currentPage, perPage, searchQuery, isActiveFilter, isStaffFilter], () => {
     refetchData()
   })
 
   const fetchUsers = (ctx, callback) => {
     store
-      .dispatch('app-user/fetchUsers', {})
+      .dispatch('app-user/fetchUsers', {
+        q: searchQuery.value,
+        perPage: perPage.value,
+        page: currentPage.value,
+        sortBy: sortBy.value,
+        sortDesc: isSortDirDesc.value,
+        isActive: isActiveFilter.value,
+        isStaff: isStaffFilter.value,
+      })
       .then(response => {
-        const { results, count } = response.data
-
-        callback(results)
-        totalUsers.value = count
+        const { data, total } = response
+        callback(data)
+        totalUsers.value = total
       })
       .catch(() => {
         toast({
@@ -75,25 +80,7 @@ export default function useUsersList() {
   // *--------- UI ---------------------------------------*
   // *===============================================---*
 
-  const resolveUserRoleVariant = role => {
-    if (role === 'subscriber') return 'primary'
-    if (role === 'author') return 'warning'
-    if (role === 'maintainer') return 'success'
-    if (role === 'editor') return 'info'
-    if (role === 'admin') return 'danger'
-    return 'primary'
-  }
-
-  const resolveUserRoleIcon = role => {
-    if (role === 'subscriber') return 'UserIcon'
-    if (role === 'author') return 'SettingsIcon'
-    if (role === 'maintainer') return 'DatabaseIcon'
-    if (role === 'editor') return 'Edit2Icon'
-    if (role === 'admin') return 'ServerIcon'
-    return 'UserIcon'
-  }
-
-  const resolveUserStatusVariant = status => {
+  const resolveUserIsActiveStaffVariant = status => {
     if (status === true) return 'success'
     return 'danger'
   }
@@ -111,14 +98,11 @@ export default function useUsersList() {
     isSortDirDesc,
     refUserListTable,
 
-    resolveUserRoleVariant,
-    resolveUserRoleIcon,
-    resolveUserStatusVariant,
+    resolveUserIsActiveStaffVariant,
     refetchData,
 
     // Extra Filters
-    roleFilter,
-    planFilter,
-    statusFilter,
+    isActiveFilter,
+    isStaffFilter,
   }
 }

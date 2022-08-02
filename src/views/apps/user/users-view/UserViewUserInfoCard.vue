@@ -1,8 +1,6 @@
 <template>
   <b-card>
-
     <b-row>
-
       <!-- User Info: Left col -->
       <b-col
         cols="21"
@@ -12,16 +10,14 @@
         <!-- User Avatar & Action Buttons -->
         <div class="d-flex justify-content-start">
           <b-avatar
-            :src="userData.avatar"
-            :text="avatarText(userData.fullName)"
-            :variant="`light-${resolveUserRoleVariant(userData.role)}`"
+            :text="avatarText(userData.first_name)"
             size="104px"
             rounded
           />
           <div class="d-flex flex-column ml-1">
             <div class="mb-1">
               <h4 class="mb-0">
-                {{ userData.fullName }}
+                {{ userData.first_name + " " + userData.last_name }}
               </h4>
               <span class="card-text">{{ userData.email }}</span>
             </div>
@@ -32,18 +28,12 @@
               >
                 Edit
               </b-button>
-              <b-button
-                variant="outline-danger"
-                class="ml-1"
-              >
-                Delete
-              </b-button>
             </div>
           </div>
         </div>
 
         <!-- User Stats -->
-        <div class="d-flex align-items-center mt-2">
+        <!-- <div class="d-flex align-items-center mt-2">
           <div class="d-flex align-items-center mr-2">
             <b-avatar
               variant="light-primary"
@@ -79,73 +69,73 @@
               <small>Annual Profit</small>
             </div>
           </div>
-        </div>
+        </div> -->
       </b-col>
 
       <!-- Right Col: Table -->
-      <b-col
-        cols="12"
-        xl="6"
-      >
+      <b-col cols="12" xl="6">
         <table class="mt-2 mt-xl-0 w-100">
           <tr>
             <th class="pb-50">
-              <feather-icon
-                icon="UserIcon"
-                class="mr-75"
-              />
-              <span class="font-weight-bold">Username</span>
+              <feather-icon icon="MailIcon" class="mr-75" />
+              <span class="font-weight-bold">Email</span>
             </th>
             <td class="pb-50">
-              {{ userData.username }}
+              {{ userData.email }}
             </td>
           </tr>
           <tr>
             <th class="pb-50">
-              <feather-icon
-                icon="CheckIcon"
-                class="mr-75"
-              />
-              <span class="font-weight-bold">Status</span>
+              <feather-icon icon="UserIcon" class="mr-75" />
+              <span class="font-weight-bold">First Name</span>
             </th>
             <td class="pb-50 text-capitalize">
-              {{ userData.status }}
+              {{ userData.first_name }}
             </td>
           </tr>
           <tr>
             <th class="pb-50">
-              <feather-icon
-                icon="StarIcon"
-                class="mr-75"
-              />
-              <span class="font-weight-bold">Role</span>
+              <feather-icon icon="UserIcon" class="mr-75" />
+              <span class="font-weight-bold">Last Name</span>
             </th>
             <td class="pb-50 text-capitalize">
-              {{ userData.role }}
+              {{ userData.last_name }}
             </td>
           </tr>
           <tr>
             <th class="pb-50">
-              <feather-icon
-                icon="FlagIcon"
-                class="mr-75"
-              />
-              <span class="font-weight-bold">Country</span>
+              <feather-icon icon="CheckIcon" class="mr-75" />
+              <span class="font-weight-bold">Is Active</span>
             </th>
             <td class="pb-50">
-              {{ userData.country }}
+              {{ userData.is_active ? "Yes" : "No" }}
+            </td>
+          </tr>
+          <tr>
+            <th class="pb-50">
+              <feather-icon icon="CheckIcon" class="mr-75" />
+              <span class="font-weight-bold">Is Staff</span>
+            </th>
+            <td class="pb-50">
+              {{ userData.is_staff ? "Yes" : "No" }}
             </td>
           </tr>
           <tr>
             <th>
-              <feather-icon
-                icon="PhoneIcon"
-                class="mr-75"
-              />
-              <span class="font-weight-bold">Contact</span>
+              <feather-icon icon="ClockIcon" class="mr-75" />
+              <span class="font-weight-bold">Date Joined</span>
             </th>
             <td>
-              {{ userData.contact }}
+              {{ userData.date_joined }}
+            </td>
+          </tr>
+          <tr>
+            <th>
+              <feather-icon icon="ClockIcon" class="mr-75" />
+              <span class="font-weight-bold">Last Login</span>
+            </th>
+            <td>
+              {{ userData.last_login }}
             </td>
           </tr>
         </table>
@@ -155,15 +145,16 @@
 </template>
 
 <script>
-import {
-  BCard, BButton, BAvatar, BRow, BCol,
-} from 'bootstrap-vue'
-import { avatarText } from '@core/utils/filter'
-import useUsersList from '../users-list/useUsersList'
+import { BCard, BButton, BAvatar, BRow, BCol } from "bootstrap-vue";
+import { avatarText } from "@core/utils/filter";
 
 export default {
   components: {
-    BCard, BButton, BRow, BCol, BAvatar,
+    BCard,
+    BButton,
+    BRow,
+    BCol,
+    BAvatar,
   },
   props: {
     userData: {
@@ -172,15 +163,12 @@ export default {
     },
   },
   setup() {
-    const { resolveUserRoleVariant } = useUsersList()
     return {
       avatarText,
-      resolveUserRoleVariant,
-    }
+    };
   },
-}
+};
 </script>
 
 <style>
-
 </style>

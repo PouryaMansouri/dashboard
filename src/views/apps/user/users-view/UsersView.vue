@@ -32,32 +32,7 @@
         >
           <user-view-user-info-card :user-data="userData" />
         </b-col>
-        <b-col
-          cols="12"
-          md="5"
-          xl="3"
-          lg="4"
-        >
-          <user-view-user-plan-card />
-        </b-col>
       </b-row>
-
-      <b-row>
-        <b-col
-          cols="12"
-          lg="6"
-        >
-          <user-view-user-timeline-card />
-        </b-col>
-        <b-col
-          cols="12"
-          lg="6"
-        >
-          <user-view-user-permissions-card />
-        </b-col>
-      </b-row>
-
-      <invoice-list />
     </template>
 
   </div>
@@ -73,9 +48,6 @@ import {
 import InvoiceList from '@/views/apps/invoice/invoice-list/InvoiceList.vue'
 import userStoreModule from '../userStoreModule'
 import UserViewUserInfoCard from './UserViewUserInfoCard.vue'
-import UserViewUserPlanCard from './UserViewUserPlanCard.vue'
-import UserViewUserTimelineCard from './UserViewUserTimelineCard.vue'
-import UserViewUserPermissionsCard from './UserViewUserPermissionsCard.vue'
 
 export default {
   components: {
@@ -86,9 +58,6 @@ export default {
 
     // Local Components
     UserViewUserInfoCard,
-    UserViewUserPlanCard,
-    UserViewUserTimelineCard,
-    UserViewUserPermissionsCard,
 
     InvoiceList,
   },

@@ -58,15 +58,6 @@ export default [
     component: () => import('@/views/pages/account-setting/AccountSetting.vue'),
     meta: {
       pageTitle: 'Account Settings',
-      breadcrumb: [
-        {
-          text: 'Pages',
-        },
-        {
-          text: 'Account Settings',
-          active: true,
-        },
-      ],
     },
   },
   {
@@ -75,52 +66,6 @@ export default [
     component: () => import('@/views/pages/profile/Profile.vue'),
     meta: {
       pageTitle: 'Profile',
-      breadcrumb: [
-        {
-          text: 'Pages',
-        },
-        {
-          text: 'Profile',
-          active: true,
-        },
-      ],
-    },
-  },
-  {
-    path: '/apps/e-commerce/shop',
-    name: 'apps-e-commerce-shop',
-    component: () => import('@/views/apps/e-commerce/e-commerce-shop/ECommerceShop.vue'),
-    meta: {
-      contentRenderer: 'sidebar-left-detached',
-      contentClass: 'ecommerce-application',
-      pageTitle: 'Shop',
-      breadcrumb: [
-        {
-          text: 'ECommerce',
-        },
-        {
-          text: 'Shop',
-          active: true,
-        },
-      ],
-    },
-  },
-  {
-    path: '/apps/e-commerce/wishlist',
-    name: 'apps-e-commerce-wishlist',
-    component: () => import('@/views/apps/e-commerce/e-commerce-wishlist/ECommerceWishlist.vue'),
-    meta: {
-      pageTitle: 'Wishlist',
-      contentClass: 'ecommerce-application',
-      breadcrumb: [
-        {
-          text: 'ECommerce',
-        },
-        {
-          text: 'Wishlist',
-          active: true,
-        },
-      ],
     },
   },
   {
@@ -138,4 +83,96 @@ export default [
     name: 'apps-users-edit',
     component: () => import('@/views/apps/user/users-edit/UsersEdit.vue'),
   },
+  {
+    path: '/apps/products/list',
+    name: 'apps-products-list',
+    component: () => import('@/views/apps/product/products-list/ProductsList.vue'),
+  },
+  {
+    path: '/apps/category/list',
+    name: 'apps-categories-list',
+    component: () => import('@/views/apps/category/categories-list/CategoriesList.vue'),
+  },
+  {
+    path: '/apps/categories/edit/:id',
+    name: 'apps-categories-edit',
+    component: () => import('@/views/apps/category/categories-edit/CategoriesEdit.vue'),
+  },
+  {
+    path: '/apps/brands/list',
+    name: 'apps-brands-list',
+    component: () => import('@/views/apps/brand/brands-list/BrandsList.vue'),
+  },
+  {
+    path: '/apps/brands/edit/:id',
+    name: 'apps-brands-edit',
+    component: () => import('@/views/apps/brand/brands-edit/BrandsEdit.vue'),
+  },
+  {
+    path: '/apps/shops/list',
+    name: 'apps-shops-list',
+    component: () => import('@/views/apps/shop/shops-list/ShopsList.vue'),
+  },
+  {
+    path: '/apps/shops/edit/:id',
+    name: 'apps-shops-edit',
+    component: () => import('@/views/apps/shop/shops-edit/ShopsEdit.vue'),
+  },
+  {
+    path: '/apps/stocks/list',
+    name: 'apps-stocks-list',
+    component: () => import('@/views/apps/stock/stocks-list/StocksList.vue'),
+  },
+  {
+    path: '/apps/stocks/edit/:id',
+    name: 'apps-stocks-edit',
+    component: () => import('@/views/apps/stock/stocks-edit/StocksEdit.vue'),
+  },
+  {
+    path: '/apps/invoice/list',
+    name: 'apps-invoices-list',
+    component: () => import('@/views/apps/invoice/invoice-list/InvoiceList.vue'),
+  },
+  {
+    path: '/apps/invoice/preview/:id',
+    name: 'apps-invoices-preview',
+    component: () => import('@/views/apps/invoice/invoice-preview/InvoicePreview.vue'),
+  },
+  {
+    path: '/apps/invoice/add/',
+    name: 'apps-invoices-add',
+    component: () => import('@/views/apps/invoice/invoice-add/InvoiceAdd.vue'),
+  },
+  {
+    path: '/apps/invoice/edit/:id',
+    name: 'apps-invoices-edit',
+    component: () => import('@/views/apps/invoice/invoice-edit/InvoiceEdit.vue'),
+  },
+  {
+    path: '/apps/e-commerce/shop',
+    name: 'apps-e-commerce-shop',
+    component: () => import('@/views/apps/e-commerce/e-commerce-shop/ECommerceShop.vue'),
+    meta: {
+      contentRenderer: 'sidebar-left-detached',
+      contentClass: 'ecommerce-application',
+    },
+  },
+  {
+    path: '/apps/e-commerce/:id',
+    name: 'apps-e-commerce-product-details',
+    component: () => import('@/views/apps/e-commerce/e-commerce-product-details/ECommerceProductDetails.vue'),
+    meta: {
+      contentClass: 'ecommerce-application',
+    },
+  },
+  // {
+  //   path: '/apps/products/view/:id',
+  //   name: 'apps-products-view',
+  //   component: () => import('@/views/apps/product/products-view/ProductsView.vue'),
+  // },
+  // {
+  //   path: '/apps/products/edit/:id',
+  //   name: 'apps-products-edit',
+  //   component: () => import('@/views/apps/product/products-edit/ProductsEdit.vue'),
+  // },
 ]

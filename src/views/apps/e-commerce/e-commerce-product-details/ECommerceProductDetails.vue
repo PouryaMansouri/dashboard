@@ -10,7 +10,7 @@
         Error fetching product data
       </h4>
       <div class="alert-body">
-        No item found with this item slug. Check
+        No item found with this item id. Check
         <b-link
           class="alert-link"
           :to="{ name: 'apps-e-commerce-shop'}"
@@ -58,15 +58,15 @@
             <b-card-text class="item-company mb-0">
               <span>by</span>
               <b-link class="company-name">
-                {{ product.brand }}
+                {{ product.brand.name }}
               </b-link>
             </b-card-text>
 
             <!-- Price And Ratings -->
             <div class="ecommerce-details-price d-flex flex-wrap mt-1">
-              <h4 class="item-price mr-1">
+              <!-- <h4 class="item-price mr-1">
                 ${{ product.price }}
-              </h4>
+              </h4> -->
               <ul class="unstyled-list list-inline pl-1 border-left">
                 <li
                   v-for="star in 5"
@@ -76,7 +76,7 @@
                   <feather-icon
                     icon="StarIcon"
                     size="18"
-                    :class="[{'fill-current': star <= product.rating}, star <= product.rating ? 'text-warning' : 'text-muted']"
+                    :class="[{'fill-current': star <= product.star}, star <= product.star ? 'text-warning' : 'text-muted']"
                   />
                 </li>
               </ul>
@@ -89,7 +89,7 @@
             <b-card-text>{{ product.description }}</b-card-text>
 
             <!-- Product Meta [Free shpping, EMI, etc.] -->
-            <ul class="product-features list-unstyled">
+            <!-- <ul class="product-features list-unstyled">
               <li v-if="product.hasFreeShipping">
                 <feather-icon icon="ShoppingCartIcon" />
                 <span>Free Shipping</span></li>
@@ -97,7 +97,7 @@
                 <feather-icon icon="DollarSignIcon" />
                 <span>EMI options available</span>
               </li>
-            </ul>
+            </ul> -->
 
             <hr>
 
@@ -127,7 +127,7 @@
 
             <hr>
 
-            <div class="d-flex flex-column flex-sm-row pt-1">
+            <!-- <div class="d-flex flex-column flex-sm-row pt-1">
               <b-button
                 v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                 variant="primary"
@@ -169,17 +169,17 @@
                   <feather-icon :icon="icon" />
                 </b-dropdown-item>
               </b-dropdown>
-            </div>
+            </div> -->
           </b-col>
         </b-row>
       </b-card-body>
 
       <!-- Static Content -->
-      <e-commerce-product-details-item-features />
+      <!-- <e-commerce-product-details-item-features /> -->
 
       <!-- Static Content -->
       <!-- Slider: Related Products -->
-      <e-commerce-product-details-related-products />
+      <!-- <e-commerce-product-details-related-products /> -->
     </b-card>
   </section>
 </template>
@@ -192,8 +192,6 @@ import {
   BCard, BCardBody, BRow, BCol, BImg, BCardText, BLink, BButton, BDropdown, BDropdownItem, BAlert,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
-import ECommerceProductDetailsItemFeatures from './ECommerceProductDetailsItemFeatures.vue'
-import ECommerceProductDetailsRelatedProducts from './ECommerceProductDetailsRelatedProducts.vue'
 import { useEcommerceUi } from '../useEcommerce'
 
 export default {
@@ -213,10 +211,6 @@ export default {
     BDropdown,
     BDropdownItem,
     BAlert,
-
-    // SFC
-    ECommerceProductDetailsItemFeatures,
-    ECommerceProductDetailsRelatedProducts,
   },
   setup() {
     const { handleCartActionClick, toggleProductInWishlist } = useEcommerceUi()
@@ -227,12 +221,12 @@ export default {
     const fetchProduct = () => {
       // Get product  id from URL
       const { route } = useRouter()
-      const productSlug = route.value.params.slug
-      const productId = productSlug.substring(productSlug.lastIndexOf('-') + 1)
+      const productId = route.value.params.id
 
       store.dispatch('app-ecommerce/fetchProduct', { productId })
         .then(response => {
-          product.value = response.data.product
+          console.log(response);
+          product.value = response.data
         })
         .catch(error => {
           if (error.response.status === 404) {
