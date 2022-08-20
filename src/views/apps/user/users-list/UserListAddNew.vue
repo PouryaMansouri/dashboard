@@ -64,7 +64,7 @@
           <validation-provider
             #default="validationContext"
             name="FirstName"
-            rules="alpha-num"
+            rules=""
           >
             <b-form-group label="FirstName" label-for="first_name">
               <b-form-input
@@ -83,7 +83,7 @@
           <validation-provider
             #default="validationContext"
             name="LastName"
-            rules="alpha-num"
+            rules=""
           >
             <b-form-group label="LastName" label-for="last_name">
               <b-form-input
@@ -102,7 +102,7 @@
           <validation-provider
             #default="validationContext"
             name="Password"
-            rules="required|alpha-num"
+            rules="required"
           >
             <b-form-group label="Password" label-for="password">
               <b-form-input

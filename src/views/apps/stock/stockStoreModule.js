@@ -17,7 +17,7 @@ export default {
       } = queryParams
       return new Promise((resolve, reject) => {
         axios
-          .get('/stocks/', {})
+          .get('/stocks-dashboard/stocks/', {})
           .then(response => {
             const { data } = response
             const queryLowered = q.toLowerCase()
@@ -25,11 +25,63 @@ export default {
             const filteredData = data.filter(
               stock =>
                 /* eslint-disable operator-linebreak, implicit-arrow-linebreak */
-                (stock.name.toLowerCase().includes(queryLowered) ||
-                  stock.description.toLowerCase().includes(queryLowered) ||
-                  stock.address.toLowerCase().includes(queryLowered)) ||
-                stock.phone.toLowerCase().includes(queryLowered) ||
-                stock.email.toLowerCase().includes(queryLowered),
+                (stock.product.name.toLowerCase().includes(queryLowered))
+            )
+
+            const sortedData = filteredData.sort(sortCompare(sortBy))
+            if (sortDesc) sortedData.reverse()
+            resolve({ data: paginateArray(sortedData, perPage, page), total: filteredData.length })
+          })
+          .catch(error => reject(error))
+      })
+    },
+    fetchStocksHistory(ctx, queryParams) {
+      const {
+        q = '',
+        perPage = 10,
+        page = 1,
+        sortBy = 'id',
+        sortDesc = false,
+      } = queryParams
+      return new Promise((resolve, reject) => {
+        axios
+          .get('/stocks-dashboard/transfer-products/', {})
+          .then(response => {
+            const { data } = response
+            const queryLowered = q.toLowerCase()
+
+            const filteredData = data.filter(
+              stock =>
+                /* eslint-disable operator-linebreak, implicit-arrow-linebreak */
+                (stock.product.name.toLowerCase().includes(queryLowered))
+            )
+
+            const sortedData = filteredData.sort(sortCompare(sortBy))
+            if (sortDesc) sortedData.reverse()
+            resolve({ data: paginateArray(sortedData, perPage, page), total: filteredData.length })
+          })
+          .catch(error => reject(error))
+      })
+    },
+    fetchStocksPending(ctx, queryParams) {
+      const {
+        q = '',
+        perPage = 10,
+        page = 1,
+        sortBy = 'id',
+        sortDesc = false,
+      } = queryParams
+      return new Promise((resolve, reject) => {
+        axios
+          .get('/stocks-dashboard/transfer-products/pendding/', {})
+          .then(response => {
+            const { data } = response
+            const queryLowered = q.toLowerCase()
+
+            const filteredData = data.filter(
+              stock =>
+                /* eslint-disable operator-linebreak, implicit-arrow-linebreak */
+                (stock.product.name.toLowerCase().includes(queryLowered))
             )
 
             const sortedData = filteredData.sort(sortCompare(sortBy))
@@ -42,23 +94,32 @@ export default {
     fetchStock(ctx, { id }) {
       return new Promise((resolve, reject) => {
         axios
-          .get(`/stocks/${id}/`)
+          .get(`/stocks-dashboard/transfer-products/${id}/`)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
     },
     addStock(ctx, stockData) {
+      console.log(stockData);
       return new Promise((resolve, reject) => {
         axios
-          .post('/stocks/', stockData)
+          .post('/stocks-dashboard/transfer-products/create/', stockData)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
     },
-    editStock(ctx, { id, stockData }) {
+    confirmTransfer(ctx, { id, stockData }) {
       return new Promise((resolve, reject) => {
         axios
-          .patch(`/stocks/${id}/`, stockData)
+          .patch(`/stocks-dashboard/transfer-products/${id}/confirm/`, stockData)
+          .then(response => resolve(response))
+          .catch(error => reject(error))
+      })
+    },
+    cancelTransfer(ctx, { id }) {
+      return new Promise((resolve, reject) => {
+        axios
+          .delete(`/stocks-dashboard/transfer-products/${id}/cancel/`)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })

@@ -30,6 +30,16 @@ export const sortCompare = key => (a, b) => {
   return comparison
 }
 
+export const onlyInLeft = (left, right) =>
+  left.filter(
+    ({ value: id1 }) => !right.some(({ value: id2 }) => id2 === id1)
+  );
+  
+  export const hasInLeft = (left, right) =>
+  left.filter(
+    ({ value: id1 }) => right.some(({ value: id2 }) => id2 === id1)
+  );
+
 const getRandomFromArray = array => array[Math.floor(Math.random() * array.length)]
 
 // ? Light and Dark variant is not included

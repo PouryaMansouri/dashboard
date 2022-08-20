@@ -26,6 +26,9 @@ route: [route_obj/route_name] (I have to resolve name somehow from the route obj
 import dashboard from '../dashboard'
 import pages from '../pages'
 import others from '../others'
+import product from '../product'
+import stock from '../stock'
+import discount from '../discount'
 
 // Array of sections
 export default [{
@@ -34,13 +37,36 @@ export default [{
     children: [
         ...dashboard,
     ],
-}, {
+},
+{
     header: 'Pages',
     icon: 'FileTextIcon',
     children: [
         ...pages
     ],
-}, {
+},
+{
+    header: 'Discount',
+    icon: 'FileTextIcon',
+    children: [
+        ...discount
+    ],
+},
+{
+    header: 'Product',
+    icon: 'FileTextIcon',
+    children: [
+        ...product
+    ],
+},
+{
+    header: 'Stock',
+    icon: 'FileTextIcon',
+    children: [
+        ...stock
+    ],
+},
+{
     header: 'Others',
     icon: 'MoreHorizontalIcon',
     children: [

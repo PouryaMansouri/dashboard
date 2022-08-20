@@ -4,7 +4,6 @@
       :is-add-new-shop-sidebar-active.sync="isAddNewShopSidebarActive"
       @refetch-data="refetchData"
     />
-
     <!-- Table Container Card -->
     <b-card no-body class="mb-0">
       <div class="m-2">
@@ -58,6 +57,16 @@
         empty-text="No matching records found"
         :sort-desc.sync="isSortDirDesc"
       >
+        <template #cell(status)="data">
+          <b-badge
+            pill
+            :variant="`light-${resolveShopStatusVariant(data.item.status)}`"
+            class="text-capitalize"
+          >
+            {{ data.item.status }}
+          </b-badge>
+        </template>
+
         <!-- Column: Actions -->
         <template #cell(actions)="data">
           <b-dropdown
@@ -82,7 +91,9 @@
 
             <b-dropdown-item>
               <feather-icon icon="TrashIcon" />
-              <span class="align-middle ml-50">Delete</span>
+              <span @click="deleteShop(data.item.id)" class="align-middle ml-50"
+                >Delete</span
+              >
             </b-dropdown-item>
           </b-dropdown>
         </template>
@@ -181,6 +192,49 @@ export default {
 
     vSelect,
   },
+  methods: {
+    deleteShop(id) {
+      this.$swal({
+        title: "Accept Or Deny",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Remove",
+        cancelButtonText: "Cancel",
+        customClass: {
+          confirmButton: "btn btn-primary",
+          cancelButton: "btn btn-outline-danger ml-1",
+        },
+        buttonsStyling: false,
+      }).then((result) => {
+        if (result.value) {
+          store.dispatch("app-shop/deleteShop", { id }).then((response) => {
+            console.log(response);
+            if (response.status == 200) {
+              this.$swal({
+                icon: "success",
+                text: "Status Changed to Deleted",
+                confirmButtonText: "OK",
+                customClass: {
+                  confirmButton: "btn btn-primary",
+                },
+              });
+              this.refetchData();
+            } else {
+              this.$toast({
+                component: ToastificationContent,
+                position: "top-right",
+                props: {
+                  title: "Error",
+                  variant: "danger",
+                  text: "Error",
+                },
+              });
+            }
+          });
+        }
+      });
+    },
+  },
   setup() {
     const Shop_APP_STORE_MODULE_NAME = "app-shop";
 
@@ -209,7 +263,7 @@ export default {
       isSortDirDesc,
       refShopListTable,
       refetchData,
-
+      resolveShopStatusVariant,
       // UI
     } = useShopsList();
 
@@ -232,6 +286,7 @@ export default {
 
       // Filter
       avatarText,
+      resolveShopStatusVariant,
     };
   },
 };

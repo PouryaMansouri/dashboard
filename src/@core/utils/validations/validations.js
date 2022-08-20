@@ -8,6 +8,7 @@ import {
   between as rule_between,
   alpha as rule_alpha,
   integer as rule_integer,
+  numeric as rule_numeric,
   digits as rule_digits,
   alpha_dash as rule_alpha_dash,
   alpha_num as rule_alpha_num,
@@ -38,6 +39,8 @@ export const between = extend('between', rule_between)
 export const alpha = extend('alpha', rule_alpha)
 
 export const integer = extend('integer', rule_integer)
+
+export const numeric = extend('numeric', rule_numeric)
 
 export const digits = extend('digits', rule_digits)
 

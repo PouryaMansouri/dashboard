@@ -67,5 +67,13 @@ export default {
           .catch(error => reject(error))
       })
     },
+    deleteCategory(ctx, { id }) {
+      return new Promise((resolve, reject) => {
+        axios
+          .delete(`/dashboard/categories/${id}/`)
+          .then(response => resolve(response))
+          .catch(error => reject(error))
+      })
+    },
   },
 }

@@ -44,7 +44,7 @@
           <validation-provider
             #default="validationContext"
             name="Name"
-            rules="required|alpha-num"
+            rules="required"
           >
             <b-form-group label="Name" label-for="name">
               <b-form-input
@@ -62,8 +62,27 @@
 
           <validation-provider
             #default="validationContext"
+            name="Slug"
+            rules="required"
+          >
+            <b-form-group label="Slug" label-for="slug">
+              <b-form-input
+                id="slug"
+                v-model="shopData.slug"
+                :state="getValidationState(validationContext)"
+                trim
+              />
+
+              <b-form-invalid-feedback>
+                {{ validationContext.errors[0] }}
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
+
+          <validation-provider
+            #default="validationContext"
             name="Description"
-            rules="alpha-num"
+            rules=""
           >
             <b-form-group label="Description" label-for="description">
               <b-form-input
@@ -81,8 +100,25 @@
 
           <validation-provider
             #default="validationContext"
+            name="Owner"
+            rules="required"
+          >
+            <b-form-group label="Owner" label-for="owner">
+              <b-form-select
+                v-model="shopData.owner"
+                :options="usersOption"
+                :select-size="4"
+              />
+              <b-form-invalid-feedback>
+                {{ validationContext.errors[0] }}
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
+
+          <validation-provider
+            #default="validationContext"
             name="Address"
-            rules="required|alpha-num"
+            rules="required"
           >
             <b-form-group label="Address" label-for="address">
               <b-form-input
@@ -101,7 +137,7 @@
           <validation-provider
             #default="validationContext"
             name="Phone"
-            rules="required|num"
+            rules="required|numeric"
           >
             <b-form-group label="Phone" label-for="phone">
               <b-form-input
@@ -170,10 +206,11 @@ import {
   BFormInput,
   BFormInvalidFeedback,
   BButton,
+  BFormSelect,
 } from "bootstrap-vue";
 import { ValidationProvider, ValidationObserver } from "vee-validate";
 import { ref } from "@vue/composition-api";
-import { required, alphaNum, email } from "@validations";
+import { required, alphaNum, email, numeric } from "@validations";
 import formValidation from "@core/comp-functions/forms/form-validation";
 import Ripple from "vue-ripple-directive";
 import vSelect from "vue-select";
@@ -193,6 +230,7 @@ export default {
     // Form Validation
     ValidationProvider,
     ValidationObserver,
+    BFormSelect,
   },
   directives: {
     Ripple,
@@ -212,7 +250,19 @@ export default {
       required,
       alphaNum,
       email,
+      numeric,
+      usersOption: [{ text: "Please Select", value: null }],
     };
+  },
+  methods: {
+    getUsers() {
+      store.dispatch("app-user/fetchUsersOption").then((response) => {
+        this.usersOption = [...this.usersOption, ...response];
+      });
+    },
+  },
+  created() {
+    this.getUsers();
   },
   setup(props, { emit }) {
     const blankShopData = {
@@ -221,6 +271,8 @@ export default {
       address: "",
       phone: "",
       email: "",
+      slug: "",
+      owner: 0,
     };
 
     const shopData = ref(JSON.parse(JSON.stringify(blankShopData)));
@@ -234,7 +286,6 @@ export default {
         emit("update:is-add-new-shop-sidebar-active", false);
       });
     };
-
     const { refFormObserver, getValidationState, resetForm } =
       formValidation(resetshopData);
 

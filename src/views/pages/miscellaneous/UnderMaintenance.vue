@@ -5,7 +5,7 @@
       <vuexy-logo />
 
       <h2 class="brand-text text-primary ml-1">
-        Vuexy
+        Dashboard
       </h2>
     </b-link>
 

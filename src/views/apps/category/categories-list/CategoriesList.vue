@@ -1,7 +1,7 @@
 <template>
   <div>
     <category-list-add-new
-      :is-add-new-category-sidebar-active.sync="isAddNewCaregorySidebarActive"
+      :is-add-new-category-sidebar-active.sync="isAddNewCategorySidebarActive"
       :is-active-options="isActiveOptions"
       :is-deleted-options="isDeletedOptions"
       :is-navbar-options="isNavbarOptions"
@@ -50,7 +50,7 @@
               />
               <b-button
                 variant="primary"
-                @click="isAddNewCaregorySidebarActive = true"
+                @click="isAddNewCategorySidebarActive = true"
               >
                 <span class="text-nowrap">Add Category</span>
               </b-button>
@@ -127,7 +127,11 @@
 
             <b-dropdown-item>
               <feather-icon icon="TrashIcon" />
-              <span class="align-middle ml-50">Delete</span>
+              <span
+                @click="deleteCategory(data.item.id)"
+                class="align-middle ml-50"
+                >Delete</span
+              >
             </b-dropdown-item>
           </b-dropdown>
         </template>
@@ -228,6 +232,48 @@ export default {
 
     vSelect,
   },
+  methods: {
+    deleteCategory(id) {
+      this.$swal({
+        title: "Accept Or Deny",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Remove",
+        cancelButtonText: "Cancel",
+        customClass: {
+          confirmButton: "btn btn-primary",
+          cancelButton: "btn btn-outline-danger ml-1",
+        },
+        buttonsStyling: false,
+      }).then((result) => {
+        if (result.value) {
+          store.dispatch("app-category/deleteCategory", { id }).then((response) => {
+            if (response.status == 204) {
+              this.$swal({
+                icon: "success",
+                text: "Deleted",
+                confirmButtonText: "OK",
+                customClass: {
+                  confirmButton: "btn btn-primary",
+                },
+              });
+              this.refetchData();
+            } else {
+              this.$toast({
+                component: ToastificationContent,
+                position: "top-right",
+                props: {
+                  title: "Error",
+                  variant: "danger",
+                  text: "Error",
+                },
+              });
+            }
+          });
+        }
+      });
+    },
+  },
   setup() {
     const category_APP_STORE_MODULE_NAME = "app-category";
 
@@ -241,7 +287,7 @@ export default {
         store.unregisterModule(category_APP_STORE_MODULE_NAME);
     });
 
-    const isAddNewCaregorySidebarActive = ref(false);
+    const isAddNewCategorySidebarActive = ref(false);
 
     const isActiveOptions = [
       { label: "Active", value: true },
@@ -251,8 +297,8 @@ export default {
     const isDeletedOptions = [
       { label: "Deleted", value: true },
       { label: "NotDeleted", value: false },
-    ];   
-    
+    ];
+
     const isNavbarOptions = [
       { label: "Navbar", value: true },
       { label: "NotNavbar", value: false },
@@ -283,7 +329,7 @@ export default {
 
     return {
       // Sidebar
-      isAddNewCaregorySidebarActive,
+      isAddNewCategorySidebarActive,
 
       fetchCategories,
       tableColumns,

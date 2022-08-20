@@ -123,7 +123,9 @@ export default {
           id: router.currentRoute.params.id,
           brandData: props.brandData,
         })
-        .then(() => {});
+        .then(() => {
+          router.push({ name: "apps-brands-list" });
+        });
     };
 
     return {

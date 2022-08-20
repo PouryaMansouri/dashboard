@@ -138,7 +138,9 @@ export default {
           id: router.currentRoute.params.id,
           categoryData: props.categoryData,
         })
-        .then(() => {});
+        .then(() => {
+          router.push({ name: "apps-categories-list" });
+        });
     };
 
     return {

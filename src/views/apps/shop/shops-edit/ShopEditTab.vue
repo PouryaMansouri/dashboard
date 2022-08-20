@@ -9,8 +9,25 @@
         </b-col>
 
         <b-col cols="12" md="4">
+          <b-form-group label="Slug" label-for="slug">
+            <b-form-input id="slug" v-model="shopData.slug" />
+          </b-form-group>
+        </b-col>
+
+        <b-col cols="12" md="4">
           <b-form-group label="Description" label-for="description">
             <b-form-input id="description" v-model="shopData.description" />
+          </b-form-group>
+        </b-col>
+
+        <b-col cols="12" md="4">
+          <b-form-group label="Owner" label-for="owner">
+            <b-form-select
+              :value="shopData.owner.id"
+              @input="inputOwner"
+              :options="usersOption"
+              :select-size="4"
+            />
           </b-form-group>
         </b-col>
 
@@ -60,6 +77,7 @@ import {
   BCardHeader,
   BCardTitle,
   BFormCheckbox,
+  BFormSelect,
 } from "bootstrap-vue";
 import { avatarText } from "@core/utils/filter";
 import vSelect from "vue-select";
@@ -83,6 +101,7 @@ export default {
     BCardTitle,
     BFormCheckbox,
     vSelect,
+    BFormSelect,
   },
   props: {
     shopData: {
@@ -91,19 +110,37 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      usersOption: [],
+    };
+  },
+  methods: {
+    getUsers() {
+      console.log(this.$props.shopData);
+      store.dispatch("app-user/fetchUsersOption").then((response) => {
+        this.usersOption = response;
+      });
+    },
+    inputOwner(value) {
+      this.$props.shopData.owner = value;
+    },
+  },
+  created() {
+    this.getUsers();
   },
   setup(props) {
     const refInputEl = ref(null);
     const previewEl = ref(null);
 
     const onSubmit = () => {
-      store
+      props.shopData.owner = store
         .dispatch("app-shop/editShop", {
           id: router.currentRoute.params.id,
           shopData: props.shopData,
         })
-        .then(() => {});
+        .then(() => {
+          router.push({ name: "apps-shops-list" });
+        });
     };
 
     return {
@@ -111,7 +148,6 @@ export default {
       refInputEl,
       previewEl,
       onSubmit,
-      shopDataOld,
     };
   },
 };

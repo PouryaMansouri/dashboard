@@ -182,7 +182,7 @@ export default {
       }).then((result) => {
         if (result.value) {
           this.$http
-            .delete(`photos/user`)
+            .delete(`/accounts/image/delete/`)
             .then((response) => {
               if (response.data.status == false) {
                 this.$toast({
@@ -215,9 +215,9 @@ export default {
     handleUploading(form, xhr) {
       this.spinner = true;
       let formData = new FormData();
-      formData.append("file", form.get("file"));
+      formData.append("avatar", form.get("file"));
       this.$http
-        .post("photos/user", formData)
+        .patch("/accounts/image/update/", formData)
         .then(() => {
           this.spinner = false;
           window.location.reload(true);

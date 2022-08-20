@@ -39,7 +39,7 @@
                 variant="primary"
                 @click="isAddNewStockSidebarActive = true"
               >
-                <span class="text-nowrap">Add Stock</span>
+                <span class="text-nowrap">Register Stock</span>
               </b-button>
             </div>
           </b-col>
@@ -58,6 +58,23 @@
         empty-text="No matching records found"
         :sort-desc.sync="isSortDirDesc"
       >
+
+      
+        <template #cell(product)="data">
+          {{ data.item.product.name }}
+        </template>
+
+        <template #cell(color)="data">
+          {{ data.item.color.name }}
+        </template>
+
+        <template #cell(size)="data">
+          {{ data.item.size.name }}
+        </template>
+
+        <template #cell(shop)="data">
+          {{ data.item.shop.name }}
+        </template>
         <!-- Column: Actions -->
         <template #cell(actions)="data">
           <b-dropdown

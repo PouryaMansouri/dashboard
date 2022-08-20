@@ -14,11 +14,11 @@ export default function useStocksList() {
   // Table Handlers
   const tableColumns = [
     { key: 'id', sortable: true },
-    { key: 'name', sortable: true },
-    { key: 'description', sortable: true },
-    { key: 'address', sortable: true },
-    { key: 'phone', sortable: true },
-    { key: 'email', sortable: true },
+    { key: 'product', sortable: true },
+    { key: 'color', sortable: true },
+    { key: 'size', sortable: true },
+    { key: 'shop', sortable: true },
+    { key: 'quantity', sortable: true },
     { key: 'actions' },
   ]
   const perPage = ref(10)

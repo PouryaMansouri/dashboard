@@ -134,7 +134,9 @@ export default {
           id: router.currentRoute.params.id,
           userData: props.userData,
         })
-        .then(() => {});
+        .then(() => {
+          router.push({ name: "apps-users-list" });
+        });
     };
 
     return {

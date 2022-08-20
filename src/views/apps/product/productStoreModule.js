@@ -19,16 +19,21 @@ export default {
     fetchProducts(ctx, payload) {
       return new Promise((resolve, reject) => {
         axios
-          .get('/dashboard/products/', {})
+          .get('/products-dashboard/products/', {})
           .then(response => {
             // eslint-disable-next-line object-curly-newline
-            const { q = '', sortBy = 'featured', perPage = 9, page = 1 } = payload
+            const { q = '', sortBy = 'featured', perPage = 9, page = 1, categories = '', brands = '' } = payload
 
             const queryLowered = q.toLowerCase()
 
             const { data } = response;
 
-            const filteredData = data.filter(product => product.name.toLowerCase().includes(queryLowered))
+            const filteredData = data.filter(
+              product =>
+                product.name.toLowerCase().includes(queryLowered) &&
+                (categories === '' ? true : product.category.id === categories) &&
+                (brands === '' ? true : product.brand.id === brands)
+            )
 
             let sortDesc = false
             const sortByKey = (() => {
@@ -48,7 +53,129 @@ export default {
 
             const paginatedData = JSON.parse(JSON.stringify(paginateArray(sortedData, perPage, page)))
 
-            resolve(paginatedData)
+            resolve({ data: paginatedData, total: filteredData.length })
+          })
+          .catch(error => reject(error))
+      })
+    },
+    fetchProductOptions(ctx, payload) {
+      return new Promise((resolve, reject) => {
+        axios
+          .get('/products-dashboard/products/', {})
+          .then(response => {
+
+            const { data } = response;
+
+            const filteredData = data.map(
+              product => {
+                return {
+                  'text': product.name,
+                  'value': product.id
+                }
+              }
+            )
+
+            resolve({ data: filteredData })
+          })
+          .catch(error => reject(error))
+      })
+    },
+    fetchFilterOptions(ctx, payload) {
+      let result = { categories: { text: "All", value: "" }, brands: { text: "All", value: "" } }
+      if (payload.type != 'All')
+        result = {
+          categories: { value: null, text: "Nothing Selected" },
+          brands: { value: null, text: "Nothing Selected" },
+        }
+
+      return new Promise((resolve, reject) => {
+        axios
+          .get('/dashboard/categories/', {})
+          .then(response => {
+            // eslint-disable-next-line object-curly-newline
+            const { data } = response;
+            const categories = data.map(
+              category => {
+                return {
+                  'text': category.name,
+                  'value': category.id
+                }
+              }
+            )
+            result.categories = [result.categories, ...categories]
+            axios
+              .get('/dashboard/brands/', {})
+              .then(response => {
+                // eslint-disable-next-line object-curly-newline
+
+                const { data } = response;
+
+                const brands = data.map(
+                  category => {
+                    return {
+                      'text': category.name,
+                      'value': category.id
+                    }
+                  }
+                )
+                result.brands = [result.brands, ...brands]
+                resolve(result)
+              })
+          })
+          .catch(error => reject(error))
+      })
+    },
+    fetchCreateOptions(ctx, payload) {
+      let result = {}
+
+      return new Promise((resolve, reject) => {
+        axios
+          .get('/dashboard/products/features/', {})
+          .then(response => {
+            // eslint-disable-next-line object-curly-newline
+            const { data } = response;
+            const features = data.map(
+              feature => {
+                return {
+                  'text': feature.description,
+                  'value': feature.id
+                }
+              }
+            )
+            result.features = features
+            axios
+              .get('/dashboard/products/colors/', {})
+              .then(response => {
+                // eslint-disable-next-line object-curly-newline
+
+                const { data } = response;
+
+                const colors = data.map(
+                  color => {
+                    return {
+                      'text': color.name,
+                      'value': color.id
+                    }
+                  }
+                )
+                result.colors = colors
+                axios
+                  .get('/dashboard/products/sizes/', {})
+                  .then(response => {
+                    // eslint-disable-next-line object-curly-newline
+                    const { data } = response;
+                    const sizes = data.map(
+                      size => {
+                        return {
+                          'text': size.name,
+                          'value': size.id
+                        }
+                      }
+                    )
+                    result.sizes = sizes
+                    resolve(result)
+                  })
+              })
           })
           .catch(error => reject(error))
       })
@@ -56,60 +183,31 @@ export default {
     fetchProduct(ctx, { productId }) {
       return new Promise((resolve, reject) => {
         axios
-          .get(`/dashboard/products/${productId}`)
+          .get(`/products-dashboard/products/${productId}/`)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
     },
-    fetchWishlistProducts() {
+    fetchProductGallery(ctx, { productId }) {
       return new Promise((resolve, reject) => {
         axios
-          .get('/dashboard/wishlist')
+          .get(`/products-dashboard/products/${productId}/images/gallery/`)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
     },
-    fetchCartProducts() {
+    editProduct(ctx, { id, productData }) {
       return new Promise((resolve, reject) => {
         axios
-          .get('/dashboard/cart')
+          .patch(`/products-dashboard/products/${id}/update/`, productData)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
     },
-
-    // ------------------------------------------------
-    // Product Actions
-    // ------------------------------------------------
-    addProductInWishlist(ctx, { productId }) {
+    deleteProduct(ctx, { id }) {
       return new Promise((resolve, reject) => {
         axios
-          .post('/dashboard/wishlist', { productId })
-          .then(response => resolve(response))
-          .catch(error => reject(error))
-      })
-    },
-    removeProductFromWishlist(ctx, { productId }) {
-      return new Promise((resolve, reject) => {
-        axios
-          .delete(`/dashboard/wishlist/${productId}`)
-          .then(response => resolve(response))
-          .catch(error => reject(error))
-      })
-    },
-
-    addProductInCart(ctx, { productId }) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post('/dashboard/cart', { productId })
-          .then(response => resolve(response))
-          .catch(error => reject(error))
-      })
-    },
-    removeProductFromCart(ctx, { productId }) {
-      return new Promise((resolve, reject) => {
-        axios
-          .delete(`/dashboard/cart/${productId}`)
+          .delete(`/products-dashboard/products/${id}/`)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })

@@ -65,5 +65,13 @@ export default {
           .catch(error => reject(error))
       })
     },
+    deleteBrand(ctx, { id }) {
+      return new Promise((resolve, reject) => {
+        axios
+          .delete(`/dashboard/brands/${id}/`)
+          .then(response => resolve(response))
+          .catch(error => reject(error))
+      })
+    },
   },
 }

@@ -4,7 +4,7 @@
       <!-- Brand logo-->
       <b-link class="brand-logo">
         <vuexy-logo />
-        <h2 class="brand-text text-primary ml-1">Vuexy</h2>
+        <h2 class="brand-text text-primary ml-1">Dashboard</h2>
       </b-link>
       <!-- /Brand logo-->
 
@@ -22,7 +22,7 @@
       <b-col lg="4" class="d-flex align-items-center auth-bg px-2 p-lg-5">
         <b-col sm="8" md="6" lg="12" class="px-xl-2 mx-auto">
           <b-card-title class="mb-1 font-weight-bold" title-tag="h2">
-            Welcome to Vuexy! 👋
+            Welcome to Sarar Dashboard! 👋
           </b-card-title>
           <b-card-text class="mb-2">
             Please sign-in to your account and start the adventure

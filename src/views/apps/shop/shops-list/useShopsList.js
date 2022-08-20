@@ -19,6 +19,7 @@ export default function useShopsList() {
     { key: 'address', sortable: true },
     { key: 'phone', sortable: true },
     { key: 'email', sortable: true },
+    { key: 'status', sortable: true },
     { key: 'actions' },
   ]
   const perPage = ref(10)
@@ -75,6 +76,11 @@ export default function useShopsList() {
   // *===============================================---*
   // *--------- UI ---------------------------------------*
   // *===============================================---*
+  const resolveShopStatusVariant = status => {
+    if (status === 'Deleted') return 'danger'
+    if (status === 'Active') return 'success'
+    return 'secondary'
+  }
 
   return {
     fetchShops,
@@ -90,5 +96,6 @@ export default function useShopsList() {
     refShopListTable,
 
     refetchData,
+    resolveShopStatusVariant
   }
 }

@@ -117,7 +117,11 @@
 
             <b-dropdown-item>
               <feather-icon icon="TrashIcon" />
-              <span class="align-middle ml-50">Delete</span>
+              <span
+                @click="deleteBrand(data.item.id)"
+                class="align-middle ml-50"
+                >Delete</span
+              >
             </b-dropdown-item>
           </b-dropdown>
         </template>
@@ -218,6 +222,48 @@ export default {
 
     vSelect,
   },
+  methods: {
+    deleteBrand(id) {
+      this.$swal({
+        title: "Accept Or Deny",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Remove",
+        cancelButtonText: "Cancel",
+        customClass: {
+          confirmButton: "btn btn-primary",
+          cancelButton: "btn btn-outline-danger ml-1",
+        },
+        buttonsStyling: false,
+      }).then((result) => {
+        if (result.value) {
+          store.dispatch("app-brand/deleteBrand", { id }).then((response) => {
+            if (response.status == 204) {
+              this.$swal({
+                icon: "success",
+                text: "Deleted",
+                confirmButtonText: "OK",
+                customClass: {
+                  confirmButton: "btn btn-primary",
+                },
+              });
+              this.refetchData();
+            } else {
+              this.$toast({
+                component: ToastificationContent,
+                position: "top-right",
+                props: {
+                  title: "Error",
+                  variant: "danger",
+                  text: "Error",
+                },
+              });
+            }
+          });
+        }
+      });
+    },
+  },
   setup() {
     const brand_APP_STORE_MODULE_NAME = "app-brand";
 
@@ -234,12 +280,12 @@ export default {
     const isAddNewBrandSidebarActive = ref(false);
 
     const isActiveOptions = [
-      { label: "Active", value: true},
+      { label: "Active", value: true },
       { label: "InActive", value: false },
     ];
 
     const isDeletedOptions = [
-      { label: "Deleted", value: true},
+      { label: "Deleted", value: true },
       { label: "NotDeleted", value: false },
     ];
 

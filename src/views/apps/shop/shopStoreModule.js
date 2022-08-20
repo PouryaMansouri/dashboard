@@ -17,7 +17,7 @@ export default {
       } = queryParams
       return new Promise((resolve, reject) => {
         axios
-          .get('/shops/', {})
+          .get('/shops-dashboard/shops/', {})
           .then(response => {
             const { data } = response
             const queryLowered = q.toLowerCase()
@@ -39,10 +39,28 @@ export default {
           .catch(error => reject(error))
       })
     },
+    fetchOptionShops(ctx) {
+      return new Promise((resolve, reject) => {
+        axios
+          .get('/shops-dashboard/shops/', {})
+          .then(response => {
+            const { data } = response
+
+            const filteredData = data.map(item => {
+              return {
+                value: item.id,
+                text: item.name
+              }
+            })
+            resolve({ data: filteredData })
+          })
+          .catch(error => reject(error))
+      })
+    },
     fetchShop(ctx, { id }) {
       return new Promise((resolve, reject) => {
         axios
-          .get(`/shops/${id}/`)
+          .get(`/shops-dashboard/shops/${id}/`)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
@@ -50,7 +68,7 @@ export default {
     addShop(ctx, shopData) {
       return new Promise((resolve, reject) => {
         axios
-          .post('/shops/', shopData)
+          .post('/shops-dashboard/shops/create/', shopData)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })
@@ -58,7 +76,15 @@ export default {
     editShop(ctx, { id, shopData }) {
       return new Promise((resolve, reject) => {
         axios
-          .patch(`/shops/${id}/`, shopData)
+          .patch(`/shops-dashboard/shops/${id}/update/`, shopData)
+          .then(response => resolve(response))
+          .catch(error => reject(error))
+      })
+    },
+    deleteShop(ctx, { id }) {
+      return new Promise((resolve, reject) => {
+        axios
+          .delete(`/shops-dashboard/shops/${id}/delete/`)
           .then(response => resolve(response))
           .catch(error => reject(error))
       })

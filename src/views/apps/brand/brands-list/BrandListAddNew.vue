@@ -44,7 +44,7 @@
           <validation-provider
             #default="validationContext"
             name="Name"
-            rules="required|alpha-num"
+            rules="required"
           >
             <b-form-group label="Name" label-for="name">
               <b-form-input
@@ -62,7 +62,7 @@
           <validation-provider
             #default="validationContext"
             name="Slug"
-            rules="required|alpha-num"
+            rules="required"
           >
             <b-form-group label="Slug" label-for="slug">
               <b-form-input
@@ -80,7 +80,7 @@
           <validation-provider
             #default="validationContext"
             name="Description"
-            rules="alpha-num"
+            rules=""
           >
             <b-form-group label="Description" label-for="description">
               <b-form-input
