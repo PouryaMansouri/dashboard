@@ -8,7 +8,7 @@
       />
       <color-section :productId="product.id" :colorData="product.color" />
       <size-section :productId="product.id" :sizeData="product.size" />
-      <image-section :productId="product.id" :image="product.image" />
+      <image-section :id="product.id" :image="product.image" type="product"/>
       <gallery-section :productId="product.id" :gallery="gallery" />
     </b-col>
   </b-row>
@@ -106,7 +106,6 @@ export default {
               fromGallery: true,
             };
           });
-          console.log(filteredData);
           gallery.value = filteredData;
         })
         .catch((error) => {

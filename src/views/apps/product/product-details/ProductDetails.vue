@@ -22,6 +22,14 @@
           Edit
         </b-button>
         <b-button
+          class="mb-1 mb-sm-0 mr-0 mr-sm-1"
+          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+          v-b-modal.modal-register-stock-form-wizard
+          variant="outline-primary"
+        >
+          Stock register
+        </b-button>
+        <b-button
           variant="primary"
           class="mb-1 mb-sm-0 mr-0 mr-sm-1"
           @click="deleteProduct(product.id)"
@@ -41,28 +49,28 @@
               mb-2 mb-md-0
             "
           >
-            <div class="d-flex align-items-center justify-content-center">
-              <b-img
-                :src="product.image"
-                :alt="`Image of ${product.name}`"
-                class="product-img"
-                fluid
-              />
-            </div>
+            <swiper
+              class="swiper-navigations"
+              :options="swiperOptions"
+              :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+            >
+              <swiper-slide v-for="(data, index) in swiperData" :key="index">
+                <b-img :src="data.image" fluid />
+              </swiper-slide>
+
+              <!-- Add Arrows -->
+              <div slot="button-next" class="swiper-button-next" />
+              <div slot="button-prev" class="swiper-button-prev" />
+            </swiper>
           </b-col>
 
           <b-col cols="12" md="7">
             <h4>{{ product.name }}</h4>
             <b-card-text class="item-company mb-0">
-              <span>by</span>
+              <span>Brand: </span>
               <b-link class="company-name">
                 {{ product.brand.name }}
               </b-link>
-              <b-badge
-                pill
-                :variant="product.brand.is_active ? 'success' : 'danger'"
-                >{{ product.brand.is_active ? "active" : "inactive" }}</b-badge
-              >
             </b-card-text>
             <div class="ecommerce-details-price d-flex flex-wrap mt-1">
               <h4 class="item-price mr-1">
@@ -103,13 +111,10 @@
               <ul class="list-unstyled mb-0">
                 <li
                   v-for="color in product.color"
-                  :key="color"
+                  :key="color.name"
                   class="d-inline-block"
                 >
-                  <div
-                    v-b-tooltip.hover.top="color.name"
-                    class="color-option"
-                  >
+                  <div v-b-tooltip.hover.top="color.name" class="color-option">
                     <div
                       class="filloption"
                       :style="'background-color:' + color.code + ';'"
@@ -125,7 +130,7 @@
               <ul class="list-unstyled mb-0">
                 <li
                   v-for="size in product.size"
-                  :key="size"
+                  :key="size.name"
                   class="d-inline-block"
                 >
                   <div class="color-option">
@@ -141,22 +146,28 @@
     </b-card>
     <b-row>
       <b-col cols="12">
-        <b-card title="Gallery">
-          <b-card-body>
-            <swiper
-              class="swiper"
-              :options="swiperOption"
-              :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-            >
-              <swiper-slide v-for="(data, index) in gallery" :key="index">
-                <b-img :src="data.image" fluid />
-              </swiper-slide>
-
-              <div slot="pagination" class="swiper-pagination" />
-            </swiper>
-          </b-card-body>
-        </b-card> </b-col
-    ></b-row>
+        <b-card title="Shops And Stocks">
+          <product-stocks :productId="productId" />
+        </b-card>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col cols="12">
+        <b-card title="Comments">
+          <comments-list-product :productId="productId" />
+        </b-card>
+      </b-col>
+    </b-row>
+    <b-modal
+      hide-footer
+      id="modal-register-stock-form-wizard"
+      scrollable
+      title="Register"
+      size="lg"
+      cancel-variant="outline-secondary"
+    >
+      <register-stock-form-wizard-product :productId="productId" />
+    </b-modal>
   </section>
 </template>
 
@@ -179,19 +190,26 @@ import {
   BBadge,
   BCardHeader,
   VBTooltip,
+  BModal,
+  VBModal,
 } from "bootstrap-vue";
 import Ripple from "vue-ripple-directive";
 import { useProductUi } from "../useProduct";
 import { Swiper, SwiperSlide } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
 import router from "@/router";
+import CommentsListProduct from "@views/apps/comment/comments-list/CommentsListProduct.vue";
+import RegisterStockFormWizardProduct from "@views/apps/stock/stocks-list/RegisterStockFormWizardProduct.vue";
+import ProductStocks from "@views/apps/stock/product-stocks/ProductStocks.vue";
 
 export default {
   directives: {
     Ripple,
     "b-tooltip": VBTooltip,
+    "b-modal": VBModal,
   },
   components: {
+    BModal,
     // BSV
     BCard,
     BCardBody,
@@ -208,9 +226,13 @@ export default {
     BCardHeader,
     Swiper,
     SwiperSlide,
+    CommentsListProduct,
+    RegisterStockFormWizardProduct,
+    ProductStocks,
   },
   methods: {
     showStatus(num) {
+      if (typeof num !== "number") return num;
       switch (num) {
         case 0:
           return "DRAFT";
@@ -221,7 +243,6 @@ export default {
       }
     },
     deleteProduct(id) {
-      console.log(id);
       this.$swal({
         title: "Accept Or Deny",
         icon: "warning",
@@ -238,7 +259,6 @@ export default {
           store
             .dispatch("app-product/deleteProduct", { id })
             .then((response) => {
-              console.log(response);
               if (response.status == 204) {
                 this.$swal({
                   icon: "success",
@@ -265,8 +285,27 @@ export default {
       });
     },
   },
+  data() {
+    return {
+      /* eslint-disable global-require */
+
+      /* eslint-disable global-require */
+
+      swiperOptions: {
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+      },
+    };
+  },
   setup() {
     const { handleCartActionClick, toggleProductInWishlist } = useProductUi();
+    const { route } = useRouter();
+    const productId = route.value.params.id;
+
+    const swiperData = [];
+
     const swiperOption = {
       slidesPerView: 3,
       slidesPerColumn: 2,
@@ -295,13 +334,12 @@ export default {
     const gallery = ref([]);
 
     const fetchProduct = () => {
-      const { route } = useRouter();
-      const productId = route.value.params.id;
-
       store
         .dispatch("app-product/fetchProduct", { productId })
         .then((response) => {
           product.value = response.data;
+          if (response.data.image)
+            swiperData.push({ image: response.data.image });
         })
         .catch((error) => {
           if (error.response.status === 404) {
@@ -311,13 +349,13 @@ export default {
     };
 
     const fetchProductGallery = () => {
-      const { route } = useRouter();
-      const productId = route.value.params.id;
-
       store
         .dispatch("app-product/fetchProductGallery", { productId })
         .then((response) => {
           gallery.value = response.data;
+          response.data.forEach((element) => {
+            swiperData.push({ image: element.image });
+          });
         })
         .catch((error) => {
           if (error.response.status === 404) {
@@ -332,10 +370,12 @@ export default {
     fetchProductGallery();
 
     return {
+      productId,
       // Fetched Product
       product,
       gallery,
       swiperOption,
+      swiperData,
 
       // UI
       selectedColor,
@@ -350,12 +390,12 @@ export default {
 @import "~@core/scss/base/pages/app-ecommerce-details.scss";
 @import "@core/scss/vue/libs/swiper.scss";
 
-.swiper {
-  ::v-deep .swiper-wrapper {
-    flex-direction: row !important;
-  }
-  .swiper-slide {
-    margin-top: 30px;
-  }
-}
+// .swiper {
+//   ::v-deep .swiper-wrapper {
+//     flex-direction: row !important;
+//   }
+//   .swiper-slide {
+//     margin-top: 30px;
+//   }
+// }
 </style>

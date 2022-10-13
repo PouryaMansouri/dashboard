@@ -41,6 +41,15 @@
           </b-form-group>
         </b-col>
         <b-col md="6">
+          <b-form-group label="product_type" label-for="product_type">
+            <b-form-select
+              @change="productTypeChange"
+              v-model="productData.product_type"
+              :options="productTypeOptions"
+            />
+          </b-form-group>
+        </b-col>
+        <b-col md="6">
           <b-form-group label="barcode" label-for="barcode">
             <b-form-input
               @change="barcodeChange"
@@ -51,7 +60,7 @@
         </b-col>
         <b-col md="6">
           <b-form-group label="description" label-for="description">
-            <b-form-input
+            <b-form-textarea
               @change="descriptionChange"
               id="description"
               :value="productData.description"
@@ -98,6 +107,7 @@ import {
   BCardBody,
   BCardFooter,
   BSpinner,
+  BFormTextarea,
 } from "bootstrap-vue";
 import store from "@/store";
 
@@ -122,6 +132,7 @@ export default {
     BCardBody,
     BCardFooter,
     BSpinner,
+    BFormTextarea,
   },
   props: {
     productData: {
@@ -142,7 +153,13 @@ export default {
         tags: null,
         barcode: null,
         description: null,
+        product_type: null,
       },
+      productTypeOptions: [
+        { value: 0, text: "Normal" },
+        { value: 1, text: "New" },
+        { value: 2, text: "Hot" },
+      ],
     };
   },
   computed: {},
@@ -155,6 +172,9 @@ export default {
     },
     brandChange(value) {
       this.product.brand = value;
+    },
+    productTypeChange(value) {
+      this.product.product_type = value;
     },
     categoryChange(value) {
       this.product.category = value;

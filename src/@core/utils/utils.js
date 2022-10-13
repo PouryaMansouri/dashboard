@@ -1,6 +1,8 @@
 import router from '@/router'
 // eslint-disable-next-line object-curly-newline
 import { reactive, getCurrentInstance, watch, toRefs } from '@vue/composition-api'
+import { utils, writeFileXLSX } from 'xlsx';
+
 
 export const isObject = obj => typeof obj === 'object' && obj !== null
 
@@ -13,6 +15,26 @@ export const isToday = date => {
     date.getFullYear() === today.getFullYear()
     /* eslint-enable */
   )
+}
+
+const getDate = () => {
+  const date = new Date().toLocaleString()
+  let res = date.replaceAll(/[,]/g, '');
+  res = res.replace(/[ :/]/g, '-');
+  return res
+}
+
+export const downloadExcel = (tableId, name) => {
+  const wb = utils.table_to_book(document.getElementById(tableId))
+  writeFileXLSX(wb, `${name}-${getDate()}.xlsx`);
+}
+
+export const print = (tableId) => {
+  var divToPrint = document.getElementById(tableId);
+  var newWin = window.open("");
+  newWin.document.write(divToPrint.outerHTML);
+  newWin.print();
+  newWin.close();
 }
 
 export const paginateArray = (array, perPage, page) => array.slice((page - 1) * perPage, page * perPage)
@@ -34,8 +56,8 @@ export const onlyInLeft = (left, right) =>
   left.filter(
     ({ value: id1 }) => !right.some(({ value: id2 }) => id2 === id1)
   );
-  
-  export const hasInLeft = (left, right) =>
+
+export const hasInLeft = (left, right) =>
   left.filter(
     ({ value: id1 }) => right.some(({ value: id2 }) => id2 === id1)
   );

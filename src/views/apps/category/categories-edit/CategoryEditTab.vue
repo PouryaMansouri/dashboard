@@ -16,7 +16,7 @@
 
         <b-col cols="12" md="4">
           <b-form-group label="Description" label-for="description">
-            <b-form-input id="description" v-model="categoryData.description" />
+            <b-form-textarea id="description" v-model="categoryData.description" />
           </b-form-group>
         </b-col>
 
@@ -32,22 +32,6 @@
               :reduce="(val) => val.value"
               :clearable="false"
               input-id="is_active"
-            />
-          </b-form-group>
-        </b-col>
-
-        <b-col cols="12" md="4">
-          <b-form-group label="Is Deleted" label-for="is_deleted">
-            <v-select
-              v-model="categoryData.is_deleted"
-              :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-              :options="[
-                { label: 'Deleted', value: true },
-                { label: 'NotDeleted', value: false },
-              ]"
-              :reduce="(val) => val.value"
-              :clearable="false"
-              input-id="is_deleted"
             />
           </b-form-group>
         </b-col>
@@ -95,6 +79,7 @@ import {
   BCardHeader,
   BCardTitle,
   BFormCheckbox,
+  BFormTextarea
 } from "bootstrap-vue";
 import { avatarText } from "@core/utils/filter";
 import vSelect from "vue-select";
@@ -118,6 +103,7 @@ export default {
     BCardTitle,
     BFormCheckbox,
     vSelect,
+    BFormTextarea
   },
   props: {
     categoryData: {

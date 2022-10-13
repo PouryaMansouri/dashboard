@@ -17,7 +17,7 @@ export default {
       } = queryParams
       return new Promise((resolve, reject) => {
         axios
-          .get('/discount-dashboard/coupons/', {})
+          .get('/discount-dashboard/coupons/')
           .then(response => {
             const { data } = response
             const queryLowered = q.toLowerCase()

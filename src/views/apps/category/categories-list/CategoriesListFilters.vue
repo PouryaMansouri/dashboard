@@ -17,17 +17,6 @@
           />
         </b-col>
         <b-col cols="12" md="4" class="mb-md-0 mb-2">
-          <label>IsDeleted</label>
-          <v-select
-            :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-            :value="isDeletedFilter"
-            :options="isDeletedOptions"
-            class="w-100"
-            :reduce="(val) => val.value"
-            @input="(val) => $emit('update:isDeletedFilter', val)"
-          />
-        </b-col>
-        <b-col cols="12" md="4" class="mb-md-0 mb-2">
           <label>IsNavbar</label>
           <v-select
             :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
@@ -61,19 +50,11 @@ export default {
       type: [Boolean, null],
       default: null,
     },
-    isDeletedFilter: {
-      type: [Boolean, null],
-      default: null,
-    },
     isNavbarFilter: {
       type: [Boolean, null],
       default: null,
     },
     isActiveOptions: {
-      type: Array,
-      required: true,
-    },
-    isDeletedOptions: {
       type: Array,
       required: true,
     },

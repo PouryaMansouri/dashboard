@@ -29,7 +29,7 @@
       <tab-content title="From Shop">
         <from-shop-tab :stock="stock" />
       </tab-content>
-      
+
       <tab-content title="To Shop">
         <to-shop-tab :stock="stock" />
       </tab-content>
@@ -113,7 +113,7 @@ export default {
         purchase_price: 0,
         transfer_price: 0,
         transfer_datetime: null,
-        transfer_note: null,
+        transfer_note: "",
       },
       colors: [],
       sizes: [],
@@ -128,10 +128,20 @@ export default {
         .dispatch("app-stock/addStock", this.stock)
         .then((response) => {
           if (response.status == 201) {
-            console.log(response.data);
           }
         })
-        .catch((error) => {});
+        .catch((error) => {
+          this.$toast({
+            component: ToastificationContent,
+            position: "top-left",
+            props: {
+              title: "Error",
+              variant: "danger",
+              icon: "AlertOctagonIcon",
+              text: error.response.data,
+            },
+          });
+        });
     },
     colorCheck() {
       return this.stock.color ? true : false;

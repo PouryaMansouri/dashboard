@@ -63,6 +63,26 @@
 
           <validation-provider
             #default="validationContext"
+            name="Phone Number"
+            rules=""
+          >
+            <b-form-group label="Phone Number" label-for="phone_number">
+              <b-form-input
+                id="phone_number"
+                v-model="userData.phone_number"
+                autofocus
+                :state="getValidationState(validationContext)"
+                trim
+              />
+
+              <b-form-invalid-feedback>
+                {{ validationContext.errors[0] }}
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
+
+          <validation-provider
+            #default="validationContext"
             name="FirstName"
             rules=""
           >
@@ -172,21 +192,21 @@
 
           <validation-provider
             #default="validationContext"
-            name="Is Superuser"
+            name="Role"
             rules=""
           >
             <b-form-group
-              label="Is Superuser"
-              label-for="is_superuser"
+              label="Role"
+              label-for="role"
               :state="getValidationState(validationContext)"
             >
               <v-select
-                v-model="userData.is_superuser"
+                v-model="userData.role"
                 :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                :options="isSuperuserOptions"
+                :options="roleOptions"
                 :reduce="(val) => val.value"
                 :clearable="false"
-                input-id="is_superuser"
+                input-id="role"
               />
               <b-form-invalid-feedback
                 :state="getValidationState(validationContext)"
@@ -283,17 +303,25 @@ export default {
         { label: "Superuser", value: true },
         { label: "Basicuser", value: false },
       ],
+      roleOptions: [
+        { label: "Normal", value: 0 },
+        { label: "Admin", value: 1 },
+        { label: "Cashier", value: 2 },
+        { label: "Stock Keeper", value: 3 },
+      ],
     };
   },
   setup(props, { emit }) {
     const blankUserData = {
       email: "",
-      first_name: null,
-      last_name: null,
+      first_name: "",
+      last_name: "",
+      phone_number: "",
       password: "",
       is_active: true,
       is_staff: true,
       is_superuser: false,
+      role: 0,
     };
 
     const userData = ref(JSON.parse(JSON.stringify(blankUserData)));

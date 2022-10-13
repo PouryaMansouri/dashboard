@@ -4,6 +4,7 @@ import store from '@/store'
 // Notification
 import { useToast } from 'vue-toastification/composition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { downloadExcel, print } from '@/@core/utils/utils'
 
 export default function useUsersList() {
   // Use toast
@@ -17,6 +18,7 @@ export default function useUsersList() {
     { key: 'email', sortable: true },
     { key: 'first_name', sortable: true },
     { key: 'last_name', sortable: true },
+    { key: 'role', sortable: true },
     { key: 'is_active', sortable: true },
     { key: 'is_staff', sortable: true },
     { key: 'actions' },
@@ -27,9 +29,10 @@ export default function useUsersList() {
   const perPageOptions = [5, 10, 25, 50, 100]
   const searchQuery = ref('')
   const sortBy = ref('id')
-  const isSortDirDesc = ref(false)
+  const isSortDirDesc = ref(true)
   const isActiveFilter = ref(null)
-  const isStaffFilter = ref(null)
+  const isStaffFilter = ref(true)
+  const roleFilter = ref(null)
 
   const dataMeta = computed(() => {
     const localItemsCount = refUserListTable.value ? refUserListTable.value.localItems.length : 0
@@ -44,7 +47,7 @@ export default function useUsersList() {
     refUserListTable.value.refresh()
   }
 
-  watch([currentPage, perPage, searchQuery, isActiveFilter, isStaffFilter], () => {
+  watch([currentPage, perPage, searchQuery, isActiveFilter, isStaffFilter, roleFilter], () => {
     refetchData()
   })
 
@@ -58,6 +61,7 @@ export default function useUsersList() {
         sortDesc: isSortDirDesc.value,
         isActive: isActiveFilter.value,
         isStaff: isStaffFilter.value,
+        role: roleFilter.value,
       })
       .then(response => {
         const { data, total } = response
@@ -74,6 +78,14 @@ export default function useUsersList() {
           },
         })
       })
+  }
+
+  const downloadExcelTable = () => {
+    downloadExcel('refUserListTable', 'users')
+  }
+
+  const printTable = () => {
+    print('refUserListTable', 'users')
   }
 
   // *===============================================---*
@@ -104,5 +116,8 @@ export default function useUsersList() {
     // Extra Filters
     isActiveFilter,
     isStaffFilter,
+    roleFilter,
+    downloadExcelTable,
+    printTable,
   }
 }

@@ -55,7 +55,6 @@ export default {
   },
   beforeCreate() {
     axios.get("/accounts/profile/detail/").then((res) => {
-      console.log(res);
       this.options = res.data;
     });
   },

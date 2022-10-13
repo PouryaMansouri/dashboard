@@ -98,9 +98,6 @@
     </b-form>
     <avatar-cropper
       @uploading="handleUploading"
-      @uploaded="handleUploaded"
-      @completed="handleCompleted"
-      @error="handlerError"
       :labels="{ submit: 'upload', cancel: 'cancel' }"
       :output-options="{ width: 640, height: 640 }"
       trigger="#pick-avatar"
@@ -126,9 +123,11 @@ import {
   BMediaBody,
   BLink,
   BImg,
+  BSpinner,
 } from "bootstrap-vue";
 import Ripple from "vue-ripple-directive";
 import { useInputImageRenderer } from "@core/comp-functions/forms/form-utils";
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { ref } from "@vue/composition-api";
 import AvatarCropper from "vue-avatar-cropper";
 
@@ -150,6 +149,7 @@ export default {
     BMediaBody,
     BLink,
     AvatarCropper,
+    BSpinner,
   },
   directives: {
     Ripple,
@@ -184,7 +184,22 @@ export default {
           this.$http
             .delete(`/accounts/image/delete/`)
             .then((response) => {
-              if (response.data.status == false) {
+              if (response.status == 200) {
+                this.$swal({
+                  icon: "success",
+                  text: "Deleted",
+                  confirmButtonText: "OK",
+                  customClass: {
+                    confirmButton: "btn btn-primary",
+                  },
+                });
+
+                let userData = JSON.parse(localStorage.getItem("userData"));
+                userData.avatar = null;
+                localStorage.setItem("userData", JSON.stringify(userData));
+
+                window.location.reload(true);
+              } else {
                 this.$toast({
                   component: ToastificationContent,
                   position: "top-right",
@@ -194,16 +209,6 @@ export default {
                     text: "Error",
                   },
                 });
-              } else {
-                this.$swal({
-                  icon: "success",
-                  text: "Deleted",
-                  confirmButtonText: "OK",
-                  customClass: {
-                    confirmButton: "btn btn-primary",
-                  },
-                });
-                window.location.reload(true);
               }
             })
             .catch((e) => {
@@ -218,12 +223,27 @@ export default {
       formData.append("avatar", form.get("file"));
       this.$http
         .patch("/accounts/image/update/", formData)
-        .then(() => {
+        .then((response) => {
+          const { data } = response;
+
+          let userData = JSON.parse(localStorage.getItem("userData"));
+          userData.avatar = data.avatar;
+          localStorage.setItem("userData", JSON.stringify(userData));
+
           this.spinner = false;
           window.location.reload(true);
         })
-        .catch((e) => {
-          console.log(e);
+        .catch((error) => {
+          this.$toast({
+            component: ToastificationContent,
+            position: "top-left",
+            props: {
+              title: "Error",
+              variant: "danger",
+              icon: "AlertOctagonIcon",
+              text: error.response.data,
+            },
+          });
         });
     },
   },

@@ -26,6 +26,17 @@
             <label>entries</label>
           </b-col>
 
+          <b-col cols="12" md="6">
+            <div class="d-flex align-items-center justify-content-end">
+              <b-button variant="outline-secondary" @click="downloadExcelTable">
+                <span class="text-nowrap">Download Excel</span>
+              </b-button>
+              <b-button variant="outline-primary" @click="printTable">
+                <span class="text-nowrap">Print</span>
+              </b-button>
+            </div>
+          </b-col>
+
           <!-- Search -->
           <b-col cols="12" md="6">
             <div class="d-flex align-items-center justify-content-end">
@@ -47,6 +58,7 @@
 
       <b-table
         ref="refShopListTable"
+        id="refShopListTable"
         class="position-relative"
         :items="fetchShops"
         responsive
@@ -56,6 +68,11 @@
         show-empty
         empty-text="No matching records found"
         :sort-desc.sync="isSortDirDesc"
+        select-mode="single"
+        @row-selected="onRowSelected"
+        selectable
+        striped
+        bordered
       >
         <template #cell(status)="data">
           <b-badge
@@ -63,7 +80,7 @@
             :variant="`light-${resolveShopStatusVariant(data.item.status)}`"
             class="text-capitalize"
           >
-            {{ data.item.status }}
+            {{ getStatus(data.item.status) }}
           </b-badge>
         </template>
 
@@ -171,6 +188,7 @@ import { avatarText } from "@core/utils/filter";
 import useShopsList from "./useShopsList";
 import shopStoreModule from "../shopStoreModule";
 import ShopListAddNew from "./ShopListAddNew.vue";
+import router from "@/router";
 
 export default {
   components: {
@@ -193,6 +211,11 @@ export default {
     vSelect,
   },
   methods: {
+    getStatus(status) {
+      if (status === 0) return "InActive";
+      if (status === 1) return "Active";
+      if (status === 2) return "Deleted";
+    },
     deleteShop(id) {
       this.$swal({
         title: "Accept Or Deny",
@@ -208,7 +231,6 @@ export default {
       }).then((result) => {
         if (result.value) {
           store.dispatch("app-shop/deleteShop", { id }).then((response) => {
-            console.log(response);
             if (response.status == 200) {
               this.$swal({
                 icon: "success",
@@ -250,6 +272,13 @@ export default {
 
     const isAddNewShopSidebarActive = ref(false);
 
+    const onRowSelected = (item) => {
+      router.push({
+        name: "apps-shops-edit",
+        params: { id: item[0].id },
+      });
+    };
+
     const {
       fetchShops,
       tableColumns,
@@ -264,6 +293,8 @@ export default {
       refShopListTable,
       refetchData,
       resolveShopStatusVariant,
+      downloadExcelTable,
+      printTable,
       // UI
     } = useShopsList();
 
@@ -287,6 +318,9 @@ export default {
       // Filter
       avatarText,
       resolveShopStatusVariant,
+      downloadExcelTable,
+      printTable,
+      onRowSelected
     };
   },
 };

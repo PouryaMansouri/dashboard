@@ -11,6 +11,8 @@
           v-model="stock.transfer_datetime"
           class="form-control"
           :config="{
+            enable: [new Date()],
+            defaultDate: new Date(),
             altInput: true,
             altFormat: 'F j, Y',
             enableTime: true,
@@ -30,15 +32,6 @@
           id="purchase_price"
           type="number"
           v-model="stock.purchase_price"
-        />
-      </b-form-group>
-    </b-col>
-    <b-col md="6">
-      <b-form-group label="Transfer Price" label-for="transfer_price">
-        <b-form-input
-          id="transfer_price"
-          type="number"
-          v-model="stock.transfer_price"
         />
       </b-form-group>
     </b-col>

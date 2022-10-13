@@ -59,7 +59,6 @@ export default function useColorsList() {
         totalColors.value = total
       })
       .catch((e) => {
-        console.log(e);
         toast({
           component: ToastificationContent,
           props: {

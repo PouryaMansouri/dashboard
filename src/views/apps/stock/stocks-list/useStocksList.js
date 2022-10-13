@@ -4,6 +4,7 @@ import store from '@/store'
 // Notification
 import { useToast } from 'vue-toastification/composition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { downloadExcel, print } from '@/@core/utils/utils'
 
 export default function useStocksList() {
   // Use toast
@@ -15,11 +16,13 @@ export default function useStocksList() {
   const tableColumns = [
     { key: 'id', sortable: true },
     { key: 'product', sortable: true },
+    { key: 'price', sortable: true },
     { key: 'color', sortable: true },
     { key: 'size', sortable: true },
     { key: 'shop', sortable: true },
     { key: 'quantity', sortable: true },
-    { key: 'actions' },
+    { key: 'online_offline_status', label: "online/offline", sortable: true },
+    { key: 'status', sortable: true },
   ]
   const perPage = ref(10)
   const totalStocks = ref(0)
@@ -27,7 +30,8 @@ export default function useStocksList() {
   const perPageOptions = [5, 10, 25, 50, 100]
   const searchQuery = ref('')
   const sortBy = ref('id')
-  const isSortDirDesc = ref(false)
+  const isSortDirDesc = ref(true)
+  const shopsFilter = ref(null)
 
   const dataMeta = computed(() => {
     const localItemsCount = refStockListTable.value ? refStockListTable.value.localItems.length : 0
@@ -42,7 +46,7 @@ export default function useStocksList() {
     refStockListTable.value.refresh()
   }
 
-  watch([currentPage, perPage, searchQuery], () => {
+  watch([currentPage, perPage, searchQuery,shopsFilter], () => {
     refetchData()
   })
 
@@ -54,27 +58,26 @@ export default function useStocksList() {
         page: currentPage.value,
         sortBy: sortBy.value,
         sortDesc: isSortDirDesc.value,
+        shops: shopsFilter.value,
       })
       .then(response => {
         const { data, total } = response
         callback(data)
         totalStocks.value = total
       })
-      .catch(() => {
-        toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Error fetching stocks list',
-            icon: 'AlertTriangleIcon',
-            variant: 'danger',
-          },
-        })
-      })
+      .catch(() => { })
   }
 
   // *===============================================---*
   // *--------- UI ---------------------------------------*
   // *===============================================---*
+  const downloadExcelTable = () => {
+    downloadExcel('refStockListTable', 'stocks')
+  }
+
+  const printTable = () => {
+    print('refStockListTable', 'stocks')
+  }
 
   return {
     fetchStocks,
@@ -88,7 +91,9 @@ export default function useStocksList() {
     sortBy,
     isSortDirDesc,
     refStockListTable,
-
+    downloadExcelTable,
+    printTable,
+    shopsFilter,
     refetchData,
   }
 }

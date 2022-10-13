@@ -4,6 +4,7 @@
       :is-add-new-user-sidebar-active.sync="isAddNewUserSidebarActive"
       :is-active-options="isActiveOptions"
       :is-staff-options="isStaffOptions"
+      :role-options="roleOptions"
       @refetch-data="refetchData"
     />
 
@@ -11,8 +12,10 @@
     <users-list-filters
       :is-active-filter.sync="isActiveFilter"
       :is-staff-filter.sync="isStaffFilter"
+      :role-filter.sync="roleFilter"
       :is-active-options="isActiveOptions"
       :is-staff-options="isStaffOptions"
+      :role-options="roleOptions"
     />
 
     <!-- Table Container Card -->
@@ -36,6 +39,16 @@
             />
             <label>entries</label>
           </b-col>
+          <b-col cols="12" md="6">
+            <div class="d-flex align-items-center justify-content-end">
+              <b-button variant="outline-secondary" @click="downloadExcelTable">
+                <span class="text-nowrap">Download Excel</span>
+              </b-button>
+              <b-button variant="outline-primary" @click="printTable">
+                <span class="text-nowrap">Print</span>
+              </b-button>
+            </div>
+          </b-col>
 
           <!-- Search -->
           <b-col cols="12" md="6">
@@ -58,6 +71,7 @@
 
       <b-table
         ref="refUserListTable"
+        id="refUserListTable"
         class="position-relative"
         :items="fetchUsers"
         responsive
@@ -67,11 +81,18 @@
         show-empty
         empty-text="No matching records found"
         :sort-desc.sync="isSortDirDesc"
+        select-mode="single"
+        @row-selected="onRowSelected"
+        selectable
+        striped
+        bordered
       >
         <template #cell(is_active)="data">
           <b-badge
             pill
-            :variant="`light-${resolveUserIsActiveStaffVariant(data.item.is_active)}`"
+            :variant="`light-${resolveUserIsActiveStaffVariant(
+              data.item.is_active
+            )}`"
             class="text-capitalize"
           >
             {{ data.item.is_active == true ? "Active" : "Inactive" }}
@@ -81,10 +102,18 @@
         <template #cell(is_staff)="data">
           <b-badge
             pill
-            :variant="`light-${resolveUserIsActiveStaffVariant(data.item.is_staff)}`"
+            :variant="`light-${resolveUserIsActiveStaffVariant(
+              data.item.is_staff
+            )}`"
             class="text-capitalize"
           >
             {{ data.item.is_staff == true ? "Staff" : "NotStaff" }}
+          </b-badge>
+        </template>
+
+        <template #cell(role)="data">
+          <b-badge pill class="text-capitalize">
+            {{ getRole(data.item.role) }}
           </b-badge>
         </template>
 
@@ -197,6 +226,7 @@ import UsersListFilters from "./UsersListFilters.vue";
 import useUsersList from "./useUsersList";
 import userStoreModule from "../userStoreModule";
 import UserListAddNew from "./UserListAddNew.vue";
+import router from "@/router";
 
 export default {
   components: {
@@ -219,6 +249,14 @@ export default {
 
     vSelect,
   },
+  methods: {
+    getRole(role) {
+      if (role == 0) return "Normal";
+      if (role == 1) return "Admin";
+      if (role == 2) return "Cashier";
+      if (role == 3) return "Stock Keeper";
+    },
+  },
   setup() {
     const USER_APP_STORE_MODULE_NAME = "app-user";
 
@@ -235,14 +273,28 @@ export default {
     const isAddNewUserSidebarActive = ref(false);
 
     const isActiveOptions = [
-      { label: "Active", value: true},
+      { label: "Active", value: true },
       { label: "InActive", value: false },
     ];
 
     const isStaffOptions = [
-      { label: "Staff", value: true},
+      { label: "Staff", value: true },
       { label: "NotStaff", value: false },
     ];
+
+    const roleOptions = [
+      { label: "Normal", value: 0 },
+      { label: "Admin", value: 1 },
+      { label: "Cashier", value: 2 },
+      { label: "Stock Keeper", value: 3 },
+    ];
+
+    const onRowSelected = (item) => {
+      router.push({
+        name: "apps-users-view",
+        params: { id: item[0].id },
+      });
+    };
 
     const {
       fetchUsers,
@@ -264,6 +316,9 @@ export default {
       // Extra Filters
       isActiveFilter,
       isStaffFilter,
+      roleFilter,
+      downloadExcelTable,
+      printTable,
     } = useUsersList();
 
     return {
@@ -291,10 +346,15 @@ export default {
 
       isActiveOptions,
       isStaffOptions,
+      roleOptions,
 
       // Extra Filters
       isActiveFilter,
       isStaffFilter,
+      roleFilter,
+      downloadExcelTable,
+      printTable,
+      onRowSelected,
     };
   },
 };

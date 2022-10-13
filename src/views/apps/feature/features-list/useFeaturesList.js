@@ -56,7 +56,7 @@ export default function useFeaturesList() {
         callback(data)
         totalFeatures.value = total
       })
-      .catch((e) => {
+      .catch(() => {
         toast({
           component: ToastificationContent,
           props: {

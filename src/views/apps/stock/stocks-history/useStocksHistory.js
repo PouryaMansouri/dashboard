@@ -4,24 +4,26 @@ import store from '@/store'
 // Notification
 import { useToast } from 'vue-toastification/composition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { downloadExcel, print } from '@/@core/utils/utils'
 
 export default function useStocksHistory() {
   // Use toast
   const toast = useToast()
 
-  const refStockListTable = ref(null)
+  const refStockListHistoryTable = ref(null)
 
   // Table Handlers
   const tableColumns = [
-    { key: 'id', sortable: true },
+    { key: 'id', label: 'transfer id', sortable: true },
+    { key: 'stock', label: 'stock id', sortable: true },
     { key: 'product', sortable: true },
+    { key: 'purchase_price', sortable: true },
     { key: 'color', sortable: true },
     { key: 'size', sortable: true },
     { key: 'transfer_to_shop', sortable: true },
     { key: 'quantity', sortable: true },
     { key: 'status', sortable: true },
     { key: 'transfer_type', sortable: true },
-    { key: 'actions' },
   ]
   const perPage = ref(10)
   const totalStocks = ref(0)
@@ -29,10 +31,10 @@ export default function useStocksHistory() {
   const perPageOptions = [5, 10, 25, 50, 100]
   const searchQuery = ref('')
   const sortBy = ref('id')
-  const isSortDirDesc = ref(false)
+  const isSortDirDesc = ref(true)
 
   const dataMeta = computed(() => {
-    const localItemsCount = refStockListTable.value ? refStockListTable.value.localItems.length : 0
+    const localItemsCount = refStockListHistoryTable.value ? refStockListHistoryTable.value.localItems.length : 0
     return {
       from: perPage.value * (currentPage.value - 1) + (localItemsCount ? 1 : 0),
       to: perPage.value * (currentPage.value - 1) + localItemsCount,
@@ -41,7 +43,7 @@ export default function useStocksHistory() {
   })
 
   const refetchData = () => {
-    refStockListTable.value.refresh()
+    refStockListHistoryTable.value.refresh()
   }
 
   watch([currentPage, perPage, searchQuery], () => {
@@ -77,6 +79,13 @@ export default function useStocksHistory() {
   // *===============================================---*
   // *--------- UI ---------------------------------------*
   // *===============================================---*
+  const downloadExcelTable = () => {
+    downloadExcel('refStockListHistoryTable', 'stocks-history')
+  }
+
+  const printTable = () => {
+    print('refStockListHistoryTable', 'stocks-history')
+  }
 
   return {
     fetchStocksHistory,
@@ -89,7 +98,9 @@ export default function useStocksHistory() {
     searchQuery,
     sortBy,
     isSortDirDesc,
-    refStockListTable,
+    refStockListHistoryTable,
+    downloadExcelTable,
+    printTable,
 
     refetchData,
   }

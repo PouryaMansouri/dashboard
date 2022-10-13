@@ -58,6 +58,39 @@ export default {
           .catch(error => reject(error))
       })
     },
+    fetchProductStocks(ctx, queryParams) {
+      const {
+        q = '',
+        perPage = 5,
+        page = 1,
+        sortBy = 'shop',
+        sortDesc = false,
+        productId = 0,
+      } = queryParams
+
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`/products-dashboard/products/${productId}/stock/`)
+          .then(response => {
+            const { data } = response
+
+            const array = Object.keys(data).map(item => {
+              return {
+                shop: item,
+                offline_stock: data[item].offline_stock,
+                online_stock: data[item].online_stock,
+                purchase_price: data[item].purchase_price,
+                total_transfer_price: data[item].total_transfer_price,
+              }
+            })
+
+            const sortedData = array.sort(sortCompare(sortBy))
+            if (sortDesc) sortedData.reverse()
+            resolve({ data: paginateArray(sortedData, perPage, page), total: array.length })
+          })
+          .catch(error => reject(error))
+      })
+    },
     fetchProductOptions(ctx, payload) {
       return new Promise((resolve, reject) => {
         axios
@@ -209,6 +242,27 @@ export default {
         axios
           .delete(`/products-dashboard/products/${id}/`)
           .then(response => resolve(response))
+          .catch(error => reject(error))
+      })
+    },
+    fetchShopProducts(ctx, queryParams) {
+      const {
+        q = '',
+        perPage = 10,
+        page = 1,
+        sortBy = 'id',
+        sortDesc = false,
+        id = 0
+      } = queryParams
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`/shops-dashboard/shops/${id}/products/`)
+          .then(response => {
+            const { data } = response
+            const sortedData = data.sort(sortCompare(sortBy))
+            if (sortDesc) sortedData.reverse()
+            resolve({ data: paginateArray(sortedData, perPage, page), total: data.length })
+          })
           .catch(error => reject(error))
       })
     },

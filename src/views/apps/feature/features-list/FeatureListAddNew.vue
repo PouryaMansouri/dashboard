@@ -47,7 +47,7 @@
             rules="required"
           >
             <b-form-group label="Description" label-for="description">
-              <b-form-input
+              <b-form-textarea
                 id="description"
                 v-model="featureData.description"
                 :state="getValidationState(validationContext)"
@@ -93,6 +93,7 @@ import {
   BFormInput,
   BFormInvalidFeedback,
   BButton,
+  BFormTextarea
 } from "bootstrap-vue";
 import { ValidationProvider, ValidationObserver } from "vee-validate";
 import { ref } from "@vue/composition-api";
@@ -115,6 +116,7 @@ export default {
     // Form Validation
     ValidationProvider,
     ValidationObserver,
+    BFormTextarea
   },
   directives: {
     Ripple,

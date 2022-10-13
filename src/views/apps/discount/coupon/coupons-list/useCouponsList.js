@@ -16,8 +16,10 @@ export default function useCouponsList() {
     { key: 'id', sortable: true },
     { key: 'code', sortable: true },
     { key: 'status', sortable: true },
-    { key: 'minimum_cart_amount', sortable: true },
-    { key: 'discount_rate', sortable: true },
+    { key: 'total_discount', sortable: true },
+    { key: 'usage_count', sortable: true },
+    // { key: 'minimum_cart_amount', sortable: true },
+    { key: 'discount_rate_or_fix_amount', label:'Discount Rate', sortable: true },
     { key: 'actions' },
   ]
   const perPage = ref(10)
@@ -26,7 +28,7 @@ export default function useCouponsList() {
   const perPageOptions = [5, 10, 25, 50, 100]
   const searchQuery = ref('')
   const sortBy = ref('id')
-  const isSortDirDesc = ref(false)
+  const isSortDirDesc = ref(true)
 
   const dataMeta = computed(() => {
     const localItemsCount = refCouponListTable.value ? refCouponListTable.value.localItems.length : 0
@@ -59,7 +61,7 @@ export default function useCouponsList() {
         callback(data)
         totalCoupons.value = total
       })
-      .catch((e) => {
+      .catch(() => {
         toast({
           component: ToastificationContent,
           props: {

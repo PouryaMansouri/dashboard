@@ -61,7 +61,7 @@ export default function useCampaignsList() {
         callback(data)
         totalCampaigns.value = total
       })
-      .catch((e) => {
+      .catch(() => {
         toast({
           component: ToastificationContent,
           props: {

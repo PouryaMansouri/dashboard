@@ -5,6 +5,11 @@
       @refetch-data="refetchData"
     />
 
+    <stocks-list-filters
+      :shops-filter.sync="shopsFilter"
+      :shops-options="shopsOptions"
+    />
+
     <!-- Table Container Card -->
     <b-card no-body class="mb-0">
       <div class="m-2">
@@ -25,6 +30,16 @@
               class="per-page-selector d-inline-block mx-50"
             />
             <label>entries</label>
+          </b-col>
+          <b-col cols="12" md="6">
+            <div class="d-flex align-items-center justify-content-end">
+              <b-button variant="outline-secondary" @click="downloadExcelTable">
+                <span class="text-nowrap">Download Excel</span>
+              </b-button>
+              <b-button variant="outline-primary" @click="printTable">
+                <span class="text-nowrap">Print</span>
+              </b-button>
+            </div>
           </b-col>
 
           <!-- Search -->
@@ -48,6 +63,7 @@
 
       <b-table
         ref="refStockListTable"
+        id="refStockListTable"
         class="position-relative"
         :items="fetchStocks"
         responsive
@@ -57,11 +73,32 @@
         show-empty
         empty-text="No matching records found"
         :sort-desc.sync="isSortDirDesc"
+        select-mode="single"
+        @row-selected="onRowSelected"
+        selectable
+        striped
+        bordered
       >
-
-      
         <template #cell(product)="data">
           {{ data.item.product.name }}
+        </template>
+
+        <template #cell(online_offline_status)="data">
+          <b-badge
+            pill
+            :variant="`light-${
+              data.item.online_offline_status === 1 ? 'info' : 'danger'
+            }`"
+            class="text-capitalize"
+          >
+            {{ getOnOffStatus(data.item.online_offline_status) }}
+          </b-badge>
+        </template>
+
+        <template #cell(status)="data">
+          <b-badge pill class="text-capitalize">
+            {{ getStatus(data.item.status) }}
+          </b-badge>
         </template>
 
         <template #cell(color)="data">
@@ -76,7 +113,7 @@
           {{ data.item.shop.name }}
         </template>
         <!-- Column: Actions -->
-        <template #cell(actions)="data">
+        <!-- <template #cell(actions)="data">
           <b-dropdown
             variant="link"
             no-caret
@@ -89,20 +126,17 @@
                 class="align-middle text-body"
               />
             </template>
-
-            <b-dropdown-item
-              :to="{ name: 'apps-stocks-edit', params: { id: data.item.id } }"
-            >
-              <feather-icon icon="EditIcon" />
-              <span class="align-middle ml-50">Edit</span>
+            <b-dropdown-item @click="hdhd">
+              <feather-icon icon="CheckIcon" />
+              <span class="align-middle ml-50">Available</span>
             </b-dropdown-item>
 
             <b-dropdown-item>
-              <feather-icon icon="TrashIcon" />
-              <span class="align-middle ml-50">Delete</span>
+              <feather-icon icon="XIcon" />
+              <span class="align-middle ml-50">Not Available</span>
             </b-dropdown-item>
           </b-dropdown>
-        </template>
+        </template> -->
       </b-table>
       <div class="mx-2 mb-2">
         <b-row>
@@ -177,11 +211,13 @@ import { avatarText } from "@core/utils/filter";
 import useStocksList from "./useStocksList";
 import stockStoreModule from "../stockStoreModule";
 import StockListAddNew from "./StockListAddNew.vue";
+import router from "@/router";
+import StocksListFilters from "./StocksListFilters.vue";
 
 export default {
   components: {
     StockListAddNew,
-
+    StocksListFilters,
     BCard,
     BRow,
     BCol,
@@ -198,6 +234,17 @@ export default {
 
     vSelect,
   },
+  methods: {
+    getStatus(status) {
+      if (status === 0) return "UnAvailable";
+      if (status === 1) return "Available";
+      if (status === 2) return "Out Of Stock";
+    },
+    getOnOffStatus(status) {
+      if (status === 1) return "Online";
+      if (status === 2) return "Offline";
+    },
+  },
   setup() {
     const Stock_APP_STORE_MODULE_NAME = "app-stock";
 
@@ -211,7 +258,25 @@ export default {
         store.unregisterModule(Stock_APP_STORE_MODULE_NAME);
     });
 
+    const shopsOptions = ref([]);
+
     const isAddNewStockSidebarActive = ref(false);
+
+    const getShopsOption = () => {
+      store.dispatch("app-shop/fetchShopsOption").then((response) => {
+        const { data } = response;
+        shopsOptions.value = data
+      });
+    };
+
+    getShopsOption();
+
+    const onRowSelected = (item) => {
+      router.push({
+        name: "apps-stocks-detail",
+        params: { id: item[0].id },
+      });
+    };
 
     const {
       fetchStocks,
@@ -226,6 +291,9 @@ export default {
       isSortDirDesc,
       refStockListTable,
       refetchData,
+      downloadExcelTable,
+      printTable,
+      shopsFilter,
 
       // UI
     } = useStocksList();
@@ -246,9 +314,13 @@ export default {
       isSortDirDesc,
       refStockListTable,
       refetchData,
-
+      downloadExcelTable,
+      printTable,
+      shopsOptions,
+      shopsFilter,
       // Filter
       avatarText,
+      onRowSelected,
     };
   },
 };

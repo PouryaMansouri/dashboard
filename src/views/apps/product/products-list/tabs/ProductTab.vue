@@ -29,13 +29,21 @@
       </b-form-group>
     </b-col>
     <b-col md="6">
+      <b-form-group label="product_type" label-for="product_type">
+        <b-form-select
+          v-model="productData.product_type"
+          :options="productTypeOptions"
+        />
+      </b-form-group>
+    </b-col>
+    <b-col md="6">
       <b-form-group label="barcode" label-for="barcode">
         <b-form-input id="barcode" v-model="productData.barcode" />
       </b-form-group>
     </b-col>
     <b-col md="6">
       <b-form-group label="description" label-for="description">
-        <b-form-input id="description" v-model="productData.description" />
+        <b-form-textarea id="description" v-model="productData.description" />
       </b-form-group>
     </b-col>
     <b-col md="6">
@@ -62,6 +70,7 @@ import {
   BButton,
   BInputGroup,
   BInputGroupAppend,
+  BFormTextarea,
 } from "bootstrap-vue";
 import store from "@/store";
 
@@ -82,6 +91,7 @@ export default {
     BButton,
     BInputGroup,
     BInputGroupAppend,
+    BFormTextarea,
   },
   props: {
     productData: {
@@ -93,6 +103,11 @@ export default {
     return {
       brands: [{ value: null, text: "Nothing Selected" }],
       categories: [{ value: null, text: "Nothing Selected" }],
+      productTypeOptions: [
+        { value: 0, text: "Normal" },
+        { value: 1, text: "New" },
+        { value: 2, text: "Hot" }
+      ],
     };
   },
   computed: {},

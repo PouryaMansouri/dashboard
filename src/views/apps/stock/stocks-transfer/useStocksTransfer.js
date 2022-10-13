@@ -15,6 +15,7 @@ export default function useStocksTransfer() {
   const tableColumns = [
     { key: 'id', sortable: true },
     { key: 'product', sortable: true },
+    { key: 'purchase_price', sortable: true },
     { key: 'color', sortable: true },
     { key: 'size', sortable: true },
     { key: 'transfer_from_shop', sortable: true },
@@ -29,7 +30,7 @@ export default function useStocksTransfer() {
   const perPageOptions = [5, 10, 25, 50, 100]
   const searchQuery = ref('')
   const sortBy = ref('id')
-  const isSortDirDesc = ref(false)
+  const isSortDirDesc = ref(true)
 
   const dataMeta = computed(() => {
     const localItemsCount = refStockTransferTable.value ? refStockTransferTable.value.localItems.length : 0

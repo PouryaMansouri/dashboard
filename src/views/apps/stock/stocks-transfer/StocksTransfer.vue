@@ -61,12 +61,8 @@
         :sort-desc.sync="isSortDirDesc"
       >
         <template #cell(status)="data">
-          <b-badge
-            pill
-            :variant="`light-${resolveStatusVariant(data.item.status)}`"
-            class="text-capitalize"
-          >
-            {{ data.item.status }}
+          <b-badge pill class="text-capitalize">
+            {{ getStatus(data.item.status) }}
           </b-badge>
         </template>
 
@@ -117,7 +113,9 @@
               <span class="align-middle ml-50">Cancel</span>
             </b-dropdown-item>
 
-            <b-dropdown-item @click="confirmTransfer(data.item.id)">
+            <b-dropdown-item
+              @click="confirmTransfer(data.item.id, data.item.stock)"
+            >
               <feather-icon icon="CheckIcon" />
               <span class="align-middle ml-50">Confirm</span>
             </b-dropdown-item>
@@ -239,7 +237,7 @@ export default {
               if (response.status == 204) {
                 this.$swal({
                   icon: "success",
-                  text: "Canceled",
+                  text: "Success",
                   confirmButtonText: "OK",
                   customClass: {
                     confirmButton: "btn btn-primary",
@@ -261,7 +259,7 @@ export default {
         }
       });
     },
-    confirmTransfer(id) {
+    confirmTransfer(id, stockId) {
       this.$swal({
         title: "Accept Or Deny",
         icon: "warning",
@@ -284,13 +282,17 @@ export default {
               if (response.status == 200) {
                 this.$swal({
                   icon: "success",
-                  text: "Canceled",
+                  text: "Success",
                   confirmButtonText: "OK",
                   customClass: {
                     confirmButton: "btn btn-primary",
                   },
                 });
                 this.refetchData();
+                this.$router.push({
+                  name: "apps-stocks-detail",
+                  params: { id: stockId },
+                });
               } else {
                 this.$toast({
                   component: ToastificationContent,
@@ -312,6 +314,11 @@ export default {
       if (status == "Pending") return "warning";
       if (status == "Canceled") return "danger";
       if (status == "Transferred") return "success";
+    };
+    const getStatus = (status) => {
+      if (status == 1) return "Pending";
+      if (status == 0) return "Canceled";
+      if (status == 2) return "Transferred";
     };
     const Stock_APP_STORE_MODULE_NAME = "app-stock";
 
@@ -345,6 +352,7 @@ export default {
     } = useStocksTransfer();
 
     return {
+      getStatus,
       resolveStatusVariant,
       // Sidebar
       isAddNewStockTransferSidebarActive,

@@ -48,9 +48,6 @@
     </b-media>
     <avatar-cropper
       @uploading="handleUploading"
-      @uploaded="handleUploaded"
-      @completed="handleCompleted"
-      @error="handlerError"
       :labels="{ submit: 'upload', cancel: 'cancel' }"
       :output-options="{ width: 1200, height: 1200 }"
       :trigger="'#image-gallery-' + itemId"

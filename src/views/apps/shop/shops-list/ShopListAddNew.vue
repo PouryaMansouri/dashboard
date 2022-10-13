@@ -82,10 +82,10 @@
           <validation-provider
             #default="validationContext"
             name="Description"
-            rules=""
+            rules="required"
           >
             <b-form-group label="Description" label-for="description">
-              <b-form-input
+              <b-form-textarea
                 id="description"
                 v-model="shopData.description"
                 :state="getValidationState(validationContext)"
@@ -104,11 +104,47 @@
             rules="required"
           >
             <b-form-group label="Owner" label-for="owner">
-              <b-form-select
+              <v-select
                 v-model="shopData.owner"
+                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
                 :options="usersOption"
-                :select-size="4"
-              />
+                label="text"
+              >
+              </v-select>
+              <b-form-invalid-feedback>
+                {{ validationContext.errors[0] }}
+              </b-form-invalid-feedback>
+            </b-form-group>
+          </validation-provider>
+
+          <validation-provider
+            #default="validationContext"
+            name="Staffs"
+            rules=""
+          >
+            <b-form-group label="Staffs" label-for="staffs">
+              <v-select
+                v-model="shopData.staffs"
+                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                :options="usersOption"
+                label="text"
+                multiple
+              >
+                <template #option="{ text, email }">
+                  <feather-icon
+                    icon="UserIcon"
+                    size="16"
+                    class="align-middle"
+                  />
+                  <span> {{ text }}</span>
+                  <feather-icon
+                    icon="MailIcon"
+                    size="16"
+                    class="align-middle ml-50"
+                  />
+                  <span> {{ email }}</span>
+                </template>
+              </v-select>
               <b-form-invalid-feedback>
                 {{ validationContext.errors[0] }}
               </b-form-invalid-feedback>
@@ -207,6 +243,7 @@ import {
   BFormInvalidFeedback,
   BButton,
   BFormSelect,
+  BFormTextarea,
 } from "bootstrap-vue";
 import { ValidationProvider, ValidationObserver } from "vee-validate";
 import { ref } from "@vue/composition-api";
@@ -231,6 +268,7 @@ export default {
     ValidationProvider,
     ValidationObserver,
     BFormSelect,
+    BFormTextarea,
   },
   directives: {
     Ripple,
@@ -251,7 +289,7 @@ export default {
       alphaNum,
       email,
       numeric,
-      usersOption: [{ text: "Please Select", value: null }],
+      usersOption: [],
     };
   },
   methods: {
@@ -281,6 +319,13 @@ export default {
     };
 
     const onSubmit = () => {
+      const { value } = shopData.value.owner;
+      const a = shopData.value.staffs;
+      const s = a.map((item) => item.value);
+
+      shopData.value.staffs = s;
+      shopData.value.owner = value;
+
       store.dispatch("app-shop/addShop", shopData.value).then(() => {
         emit("refetch-data");
         emit("update:is-add-new-shop-sidebar-active", false);

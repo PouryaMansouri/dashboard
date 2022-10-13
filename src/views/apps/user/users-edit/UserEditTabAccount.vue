@@ -57,6 +57,24 @@
             />
           </b-form-group>
         </b-col>
+
+        <b-col cols="12" md="4">
+          <b-form-group label="Role" label-for="role">
+            <v-select
+              v-model="userData.role"
+              :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+              :options="[
+                { label: 'Normal', value: 0 },
+                { label: 'Admin', value: 1 },
+                { label: 'Cashier', value: 2 },
+                { label: 'Stock Keeper', value: 3 },
+              ]"
+              :reduce="(val) => val.value"
+              :clearable="false"
+              input-id="role"
+            />
+          </b-form-group>
+        </b-col>
       </b-row>
     </b-form>
 

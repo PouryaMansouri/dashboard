@@ -16,7 +16,7 @@
 
         <b-col cols="12" md="4">
           <b-form-group label="Description" label-for="description">
-            <b-form-input id="description" v-model="brandData.description" />
+            <b-form-textarea id="description" v-model="brandData.description" />
           </b-form-group>
         </b-col>
 
@@ -80,6 +80,7 @@ import {
   BCardHeader,
   BCardTitle,
   BFormCheckbox,
+  BFormTextarea
 } from "bootstrap-vue";
 import { avatarText } from "@core/utils/filter";
 import vSelect from "vue-select";
@@ -103,6 +104,7 @@ export default {
     BCardTitle,
     BFormCheckbox,
     vSelect,
+    BFormTextarea
   },
   props: {
     brandData: {

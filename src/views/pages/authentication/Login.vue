@@ -74,7 +74,6 @@
                 </validation-provider>
               </b-form-group>
 
-              <!-- forgot password -->
               <b-form-group>
                 <!-- <div class="d-flex justify-content-between">
                   <label for="login-password">Password</label>
@@ -136,36 +135,8 @@
             </b-form>
           </validation-observer>
 
-          <!-- <b-card-text class="text-center mt-2">
-            <span>New on our platform? </span>
-            <b-link :to="{ name: 'auth-register' }">
-              <span>&nbsp;Create an account</span>
-            </b-link>
-          </b-card-text> -->
-
-          <!-- divider -->
-          <!-- <div class="divider my-2">
-            <div class="divider-text">or</div>
-          </div> -->
-
-          <!-- social buttons -->
-          <!-- <div class="auth-footer-btn d-flex justify-content-center">
-            <b-button variant="facebook" href="javascript:void(0)">
-              <feather-icon icon="FacebookIcon" />
-            </b-button>
-            <b-button variant="twitter" href="javascript:void(0)">
-              <feather-icon icon="TwitterIcon" />
-            </b-button>
-            <b-button variant="google" href="javascript:void(0)">
-              <feather-icon icon="MailIcon" />
-            </b-button>
-            <b-button variant="github" href="javascript:void(0)">
-              <feather-icon icon="GithubIcon" />
-            </b-button>
-          </div> -->
         </b-col>
       </b-col>
-      <!-- /Login-->
     </b-row>
   </div>
 </template>
@@ -259,48 +230,91 @@ export default {
               password: this.password,
             })
             .then(async (response) => {
-              useJwt.setToken(response.data.access);
-              useJwt.setRefreshToken(response.data.refresh);
-              const { data } = await this.$http.get("accounts/profile/detail/");
+              const resData = response.data;
 
-              const userData = {
-                id: data.user.id,
-                fullName: `${data.user.first_name} ${data.user.last_name}`,
-                firstName: data.user.first_name,
-                lastName: data.user.last_name,
-                avatar: data.avatar,
-                email: data.user.email,
-                role: "admin",
-                ability: [
+              if (!(resData.user === undefined)) {
+                useJwt.setToken(resData.access);
+                useJwt.setRefreshToken(resData.refresh);
+                const { data } = await this.$http.get(
+                  "accounts/profile/detail/"
+                );
+
+                const userData = {
+                  id: data.user.id,
+                  fullName: `${data.user.first_name} ${data.user.last_name}`,
+                  firstName: data.user.first_name,
+                  lastName: data.user.last_name,
+                  avatar: data.avatar,
+                  email: data.user.email,
+                  role: resData.user.role,
+                  shop: resData.shop,
+                  ability: [],
+                };
+
+                const admin = [
                   {
                     action: "manage",
                     subject: "all",
                   },
-                ],
-              };
+                ];
+                const stockKeeper = [
+                  {
+                    action: "read",
+                    subject: "stockKeeper",
+                  },
+                ];
+                const cashier = [
+                  {
+                    action: "read",
+                    subject: "verbal",
+                  },
+                ];
 
-              localStorage.setItem("userData", JSON.stringify(userData));
-              this.$ability.update(userData.ability);
+                if (resData.user.role == "ADMIN") userData.ability = [...admin];
+                if (resData.user.role == "STOCK_KEEPER")
+                  userData.ability = [...stockKeeper];
+                if (resData.user.role == "CASHIER")
+                  userData.ability = [...cashier];
 
-              this.$router
-                .replace(getHomeRouteForLoggedInUser(userData.role))
-                .then(() => {
-                  this.$toast({
-                    component: ToastificationContent,
-                    position: "top-right",
-                    props: {
-                      title: `Welcome ${
-                        userData.fullName || userData.username
-                      }`,
-                      icon: "CoffeeIcon",
-                      variant: "success",
-                      text: `You have successfully logged in as ${userData.role}. Now you can start to explore!`,
-                    },
+                localStorage.setItem("userData", JSON.stringify(userData));
+                this.$ability.update(userData.ability);
+
+                this.$router
+                  .replace(getHomeRouteForLoggedInUser(userData.role))
+                  .then(() => {
+                    this.$toast({
+                      component: ToastificationContent,
+                      position: "top-right",
+                      props: {
+                        title: `Welcome ${
+                          userData.fullName || userData.username
+                        }`,
+                        icon: "CoffeeIcon",
+                        variant: "success",
+                        text: `You have successfully logged in as ${userData.role}. Now you can start to explore!`,
+                      },
+                    });
                   });
+              } else {
+                let errorMessage = "";
+                if (resData.status == "fail")
+                  errorMessage = "You Are Not Authorized";
+                if (resData.status == "normal") errorMessage = resData.message;
+
+                this.$toast({
+                  component: ToastificationContent,
+                  position: "top-right",
+                  props: {
+                    title: `Error`,
+                    icon: "CircleIcon",
+                    variant: "danger",
+                    text: errorMessage,
+                  },
                 });
-            })
+              }
+            }) //todo correct 401 not showing toast problem
             .catch((error) => {
-              this.$refs.loginForm.setErrors(error.response.data.error);
+              console.log(error);
             });
         }
       });

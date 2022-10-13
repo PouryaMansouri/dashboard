@@ -83,7 +83,7 @@
             rules=""
           >
             <b-form-group label="Description" label-for="description">
-              <b-form-input
+              <b-form-textarea
                 id="description"
                 v-model="brandData.description"
                 :state="getValidationState(validationContext)"
@@ -91,58 +91,6 @@
               />
 
               <b-form-invalid-feedback>
-                {{ validationContext.errors[0] }}
-              </b-form-invalid-feedback>
-            </b-form-group>
-          </validation-provider>
-
-          <validation-provider
-            #default="validationContext"
-            name="Is Active"
-            rules=""
-          >
-            <b-form-group
-              label="Is Active"
-              label-for="is_active"
-              :state="getValidationState(validationContext)"
-            >
-              <v-select
-                v-model="brandData.is_active"
-                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                :options="isActiveOptions"
-                :reduce="(val) => val.value"
-                :clearable="false"
-                input-id="is_active"
-              />
-              <b-form-invalid-feedback
-                :state="getValidationState(validationContext)"
-              >
-                {{ validationContext.errors[0] }}
-              </b-form-invalid-feedback>
-            </b-form-group>
-          </validation-provider>
-
-          <validation-provider
-            #default="validationContext"
-            name="Is Deleted"
-            rules=""
-          >
-            <b-form-group
-              label="Is Deleted"
-              label-for="is_deleted"
-              :state="getValidationState(validationContext)"
-            >
-              <v-select
-                v-model="brandData.is_deleted"
-                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                :options="isDeletedOptions"
-                :reduce="(val) => val.value"
-                :clearable="false"
-                input-id="is_deleted"
-              />
-              <b-form-invalid-feedback
-                :state="getValidationState(validationContext)"
-              >
                 {{ validationContext.errors[0] }}
               </b-form-invalid-feedback>
             </b-form-group>
@@ -181,6 +129,7 @@ import {
   BFormInput,
   BFormInvalidFeedback,
   BButton,
+  BFormTextarea
 } from "bootstrap-vue";
 import { ValidationProvider, ValidationObserver } from "vee-validate";
 import { ref } from "@vue/composition-api";
@@ -199,6 +148,7 @@ export default {
     BFormInvalidFeedback,
     BButton,
     vSelect,
+    BFormTextarea,
 
     // Form Validation
     ValidationProvider,

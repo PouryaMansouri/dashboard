@@ -89,18 +89,6 @@ export default {
       required,
       alphaNum,
       email,
-      isActiveOptions: [
-        { label: "Active", value: true },
-        { label: "InActive", value: false },
-      ],
-      isStaffOptions: [
-        { label: "Staff", value: true },
-        { label: "NotStaff", value: false },
-      ],
-      isSuperproductOptions: [
-        { label: "Superproduct", value: true },
-        { label: "Basicproduct", value: false },
-      ],
     };
   },
   setup(props, { emit }) {
@@ -112,6 +100,7 @@ export default {
       is_active: true,
       is_staff: true,
       is_superproduct: false,
+      product_type: 0,
     };
 
     const productData = ref(JSON.parse(JSON.stringify(blankProductData)));

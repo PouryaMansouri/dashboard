@@ -4,6 +4,7 @@ import store from '@/store'
 // Notification
 import { useToast } from 'vue-toastification/composition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { downloadExcel, print } from '@/@core/utils/utils'
 
 export default function useShopsList() {
   // Use toast
@@ -82,6 +83,14 @@ export default function useShopsList() {
     return 'secondary'
   }
 
+  const downloadExcelTable = () => {
+    downloadExcel('refShopListTable', 'shops')
+  }
+
+  const printTable = () => {
+    print('refShopListTable', 'shops')
+  }
+
   return {
     fetchShops,
     tableColumns,
@@ -96,6 +105,8 @@ export default function useShopsList() {
     refShopListTable,
 
     refetchData,
-    resolveShopStatusVariant
+    resolveShopStatusVariant,
+    downloadExcelTable,
+    printTable,
   }
 }

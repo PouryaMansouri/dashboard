@@ -8,6 +8,7 @@
           rounded
           :src="image || blankImage"
           height="175"
+          :width="type == 'product' ? 175 : 350"
         />
         <b-img
           ref="previewEl"
@@ -15,6 +16,7 @@
           :src="newImage"
           rounded
           height="175"
+          :width="type == 'product' ? 175 : 350"
         />
       </b-media-aside>
       <b-media-body class="mt-75 ml-75">
@@ -23,7 +25,7 @@
           <b-spinner variant="primary" label="Text Centered" />
         </div>
         <b-button
-          id="product-image"
+          id="upload-image"
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
           variant="primary"
           size="sm"
@@ -49,12 +51,16 @@
 
     <avatar-cropper
       @uploading="handleUploading"
-      @uploaded="handleUploaded"
-      @completed="handleCompleted"
-      @error="handlerError"
       :labels="{ submit: 'upload', cancel: 'cancel' }"
-      :output-options="{ width: 1200, height: 1200 }"
-      trigger="#product-image"
+      :cropper-options="
+        type == 'product' ? { aspectRatio: 1 } : { aspectRatio: 2 }
+      "
+      :output-options="
+        type == 'product'
+          ? { width: 1200, height: 1200 }
+          : { width: 1200, height: 600 }
+      "
+      trigger="#upload-image"
       upload-url="/crop"
     />
   </b-card>
@@ -107,7 +113,7 @@ export default {
   directives: {
     Ripple,
   },
-  props: ["productId","image"],
+  props: ["id", "image", "type"],
   data() {
     return {
       profileFile: null,
@@ -119,70 +125,130 @@ export default {
   },
   methods: {
     deleteImage() {
-      this.$swal({
-        title: "Accept Or Deny",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Remove",
-        cancelButtonText: "Cancel",
-        customClass: {
-          confirmButton: "btn btn-primary",
-          cancelButton: "btn btn-outline-danger ml-1",
-        },
-        buttonsStyling: false,
-      }).then((result) => {
-        if (result.value) {
-          this.$http
-            .delete(
-              `/products-dashboard/products/${this.productId}/images/delete/`
-            )
-            .then((response) => {
-              if (response.data.status == false) {
-                this.$toast({
-                  component: ToastificationContent,
-                  position: "top-right",
-                  props: {
-                    title: "Error",
-                    variant: "danger",
-                    text: "Error",
-                  },
-                });
-              } else {
-                this.$swal({
-                  icon: "success",
-                  text: "Deleted",
-                  confirmButtonText: "OK",
-                  customClass: {
-                    confirmButton: "btn btn-primary",
-                  },
-                });
-                this.imageUploaded = false;
-                this.image = null;
-              }
-            })
-            .catch((e) => {
-              console.log(e);
-            });
-        }
-      });
+      if (this.type == "shop") {
+        this.$swal({
+          title: "Accept Or Deny",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          customClass: {
+            confirmButton: "btn btn-primary",
+            cancelButton: "btn btn-outline-danger ml-1",
+          },
+          buttonsStyling: false,
+        }).then((result) => {
+          if (result.value) {
+            this.$http
+              .delete(`/shops-dashboard/shops/${this.id}/image/delete/`)
+              .then((response) => {
+                if (response.data.status == false) {
+                  this.$toast({
+                    component: ToastificationContent,
+                    position: "top-right",
+                    props: {
+                      title: "Error",
+                      variant: "danger",
+                      text: "Error",
+                    },
+                  });
+                } else {
+                  this.$swal({
+                    icon: "success",
+                    text: "Deleted",
+                    confirmButtonText: "OK",
+                    customClass: {
+                      confirmButton: "btn btn-primary",
+                    },
+                  });
+                  this.imageUploaded = false;
+                  this.image = null;
+                }
+              })
+              .catch((e) => {
+                console.log(e);
+              });
+          }
+        });
+      }
+      if (this.type == "product") {
+        this.$swal({
+          title: "Accept Or Deny",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Remove",
+          cancelButtonText: "Cancel",
+          customClass: {
+            confirmButton: "btn btn-primary",
+            cancelButton: "btn btn-outline-danger ml-1",
+          },
+          buttonsStyling: false,
+        }).then((result) => {
+          if (result.value) {
+            this.$http
+              .delete(`/products-dashboard/products/${this.id}/images/delete/`)
+              .then((response) => {
+                if (response.data.status == false) {
+                  this.$toast({
+                    component: ToastificationContent,
+                    position: "top-right",
+                    props: {
+                      title: "Error",
+                      variant: "danger",
+                      text: "Error",
+                    },
+                  });
+                } else {
+                  this.$swal({
+                    icon: "success",
+                    text: "Deleted",
+                    confirmButtonText: "OK",
+                    customClass: {
+                      confirmButton: "btn btn-primary",
+                    },
+                  });
+                  this.imageUploaded = false;
+                  this.image = null;
+                }
+              })
+              .catch((e) => {
+                console.log(e);
+              });
+          }
+        });
+      }
     },
     handleUploading(form, xhr) {
-      this.spinner = true;
-      let formData = new FormData();
-      formData.append("image", form.get("file"));
-      this.$http
-        .patch(
-          `/products-dashboard/products/${this.productId}/images/`,
-          formData
-        )
-        .then((response) => {
-          this.spinner = false;
-          this.imageUploaded = true;
-          this.newImage = response.data.image;
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+      if (this.type == "shop") {
+        this.spinner = true;
+        let formData = new FormData();
+        formData.append("image", form.get("file"));
+        this.$http
+          .patch(`/shops-dashboard/shops/${this.id}/image/update/`, formData)
+          .then((response) => {
+            this.spinner = false;
+            this.imageUploaded = true;
+            this.newImage = response.data.image;
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }
+      if (this.type == "product") {
+        this.spinner = true;
+        let formData = new FormData();
+        formData.append("image", form.get("file"));
+        this.$http
+          .patch(`/products-dashboard/products/${this.id}/images/`, formData)
+          .then((response) => {
+            this.spinner = false;
+            this.imageUploaded = true;
+            this.newImage = response.data.image;
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      }
     },
   },
   setup() {

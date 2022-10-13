@@ -4,6 +4,7 @@ import store from '@/store'
 // Notification
 import { useToast } from 'vue-toastification/composition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { downloadExcel, print } from '@/@core/utils/utils'
 
 export default function useBrandsList() {
   // Use toast
@@ -17,8 +18,6 @@ export default function useBrandsList() {
     { key: 'name', sortable: true },
     { key: 'slug', sortable: true },
     { key: 'description', sortable: true },
-    { key: 'is_active', sortable: true },
-    { key: 'is_deleted', sortable: true },
     { key: 'actions' },
   ]
   const perPage = ref(10)
@@ -84,6 +83,13 @@ export default function useBrandsList() {
     if (status === true) return 'success'
     return 'danger'
   }
+  const downloadExcelTable = () => {
+    downloadExcel('refBrandListTable', 'brands')
+  }
+
+  const printTable = () => {
+    print('refBrandListTable', 'brands')
+  }
 
   return {
     fetchBrands,
@@ -102,5 +108,7 @@ export default function useBrandsList() {
     // Extra Filters
     isActiveFilter,
     isDeletedFilter,
+    downloadExcelTable,
+    printTable,
   }
 }

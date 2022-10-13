@@ -62,6 +62,7 @@ import SizeTab from "./tabs/SizeTab.vue";
 import ProductTab from "./tabs/ProductTab.vue";
 import TransferTab from "./tabs/TransferTab.vue";
 import store from "@/store";
+import router from '@/router';
 
 export default {
   components: {
@@ -88,12 +89,7 @@ export default {
     ShopTab,
     TransferTab,
   },
-  props: {
-    isAddNewStockSidebarActive: {
-      type: Boolean,
-      required: true,
-    },
-  },
+  props: {},
   data() {
     return {
       stock: {
@@ -107,7 +103,7 @@ export default {
         purchase_price: 0,
         transfer_price: 0,
         transfer_datetime: null,
-        transfer_note: null,
+        transfer_note: "",
       },
       colors: [],
       sizes: [],
@@ -121,11 +117,32 @@ export default {
       store
         .dispatch("app-stock/addStock", this.stock)
         .then((response) => {
-          if (response.status == 201) {
-            console.log(response.data);
+          if (response.status == 200) {
+            this.$toast({
+              component: ToastificationContent,
+              position: "top-left",
+              props: {
+                title: "",
+                variant: "success",
+              },
+            });
+            router.push({
+              name: "apps-stocks-transfer",
+            });
           }
         })
-        .catch((error) => {});
+        .catch((error) => {
+          this.$toast({
+            component: ToastificationContent,
+            position: "top-left",
+            props: {
+              title: "Error",
+              variant: "danger",
+              icon: "AlertOctagonIcon",
+              text: error.response.data,
+            },
+          });
+        });
     },
     colorCheck() {
       return this.stock.color ? true : false;

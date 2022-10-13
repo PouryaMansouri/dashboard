@@ -58,7 +58,7 @@ export default function useFaqsList() {
         callback(data)
         totalFaqs.value = total
       })
-      .catch((e) => {
+      .catch(() => {
         toast({
           component: ToastificationContent,
           props: {

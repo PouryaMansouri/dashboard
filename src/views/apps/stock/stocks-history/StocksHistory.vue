@@ -22,6 +22,17 @@
             <label>entries</label>
           </b-col>
 
+          <b-col cols="12" md="6">
+            <div class="d-flex align-items-center justify-content-end">
+              <b-button variant="outline-secondary" @click="downloadExcelTable">
+                <span class="text-nowrap">Download Excel</span>
+              </b-button>
+              <b-button variant="outline-primary" @click="printTable">
+                <span class="text-nowrap">Print</span>
+              </b-button>
+            </div>
+          </b-col>
+
           <!-- Search -->
           <b-col cols="12" md="6">
             <div class="d-flex align-items-center justify-content-end">
@@ -36,7 +47,8 @@
       </div>
 
       <b-table
-        ref="refStockListTable"
+        ref="refStockListHistoryTable"
+        id="refStockListHistoryTable"
         class="position-relative"
         :items="fetchStocksHistory"
         responsive
@@ -53,7 +65,7 @@
             :variant="`light-${resolveStatusVariant(data.item.status)}`"
             class="text-capitalize"
           >
-            {{ data.item.status }}
+            {{ getStatus(data.item.status) }}
           </b-badge>
         </template>
 
@@ -89,7 +101,7 @@
             </template>
 
             <b-dropdown-item
-              :to="{ name: 'apps-stocks-view', params: { id: data.item.id } }"
+              :to="{ name: 'apps-stocks-detail', params: { id: data.item.stock } }"
             >
               <feather-icon icon="EyeIcon" />
               <span class="align-middle ml-50">View</span>
@@ -189,9 +201,14 @@ export default {
   },
   setup() {
     const resolveStatusVariant = (status) => {
-      if (status == "Pending") return "warning";
-      if (status == "Canceled") return "danger";
-      if (status == "Transferred") return "success";
+      if (status == 0) return "danger";
+      if (status == 1) return "warning";
+      if (status == 2) return "success";
+    };
+    const getStatus = (status) => {
+      if (status == 0) return "Canceled";
+      if (status == 1) return "Pending";
+      if (status == 2) return "Transferred";
     };
     const Stock_APP_STORE_MODULE_NAME = "app-stock";
 
@@ -216,13 +233,16 @@ export default {
       searchQuery,
       sortBy,
       isSortDirDesc,
-      refStockListTable,
+      refStockListHistoryTable,
       refetchData,
+      downloadExcelTable,
+      printTable,
 
       // UI
     } = useStocksHistory();
 
     return {
+      getStatus,
       resolveStatusVariant,
       fetchStocksHistory,
       tableColumns,
@@ -234,8 +254,10 @@ export default {
       searchQuery,
       sortBy,
       isSortDirDesc,
-      refStockListTable,
+      refStockListHistoryTable,
       refetchData,
+      downloadExcelTable,
+      printTable,
     };
   },
 };

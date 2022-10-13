@@ -1,6 +1,13 @@
 const path = require('path')
 
 module.exports = {
+  devServer: {
+    disableHostCheck: true,
+    host: '0.0.0.0',
+    https: false,
+    port: 8080,
+    public: 'http://0.0.0.0:8080'
+  },
   publicPath: '/',
   lintOnSave: false,
   css: {
@@ -19,6 +26,7 @@ module.exports = {
         '@core': path.resolve(__dirname, 'src/@core'),
         '@validations': path.resolve(__dirname, 'src/@core/utils/validations/validations.js'),
         '@axios': path.resolve(__dirname, 'src/libs/axios'),
+        '@views': path.resolve(__dirname, 'src/views'),
       },
     },
   },

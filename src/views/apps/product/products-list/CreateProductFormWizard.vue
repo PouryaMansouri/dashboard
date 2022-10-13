@@ -167,7 +167,6 @@ export default {
           .then((response) => {
             if (response.status === 201) {
               this.$data.productId = response.data.id;
-              resolve(true);
               this.$toast({
                 component: ToastificationContent,
                 props: {
@@ -177,9 +176,21 @@ export default {
                 },
               });
             }
-            resolve(false);
+            resolve(response);
           })
-          .catch(() => reject(false));
+          .catch((error) => {
+            this.$toast({
+              component: ToastificationContent,
+              position: "top-left",
+              props: {
+                title: "Error",
+                variant: "danger",
+                icon: "AlertOctagonIcon",
+                text: error.response.data,
+              },
+            });
+            reject(error);
+          });
       });
     },
   },
